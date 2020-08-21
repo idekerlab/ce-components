@@ -10,4 +10,8 @@ export const Thing: FC<Props> = ({ children }) => {
   return <div>{children || `the snozzberries taste like snozzberries`}</div>;
 };
 
-export { CyNDExProvider as CyNDExProvider } from './CyNDExContext';
+export { default as OpenInCytoscapeButton } from './OpenInCytoscapeButton';
+export * from './OpenInCytoscapeButton';
+
+export { CyNDExProvider } from './CyNDExContext';
+export { NDExAccountProvider } from './NDExAccountContext';

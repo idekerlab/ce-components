@@ -3,11 +3,16 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Thing } from '../.';
 import { CyNDExProvider } from '../.';
+import { NDExAccountProvider } from '../.';
+import { OpenInCytoscapeButton } from '../.';
 
 const App = () => {
   return (
-    <CyNDExProvider port={ 1234 }>
-    <Thing />
+    <CyNDExProvider port={1234}>
+      <NDExAccountProvider ndexServerURL='http://public.ndexbio.org' >
+      <OpenInCytoscapeButton variant="outlined" size="small" />
+        <Thing />
+      </NDExAccountProvider>
     </CyNDExProvider>
   );
 };
