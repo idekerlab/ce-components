@@ -41,7 +41,7 @@ const OpenInCytoscapeButton = props => {
   const cyRESTAvailable = cyNDExValue.state.available;
   const cyRESTPort = cyNDExValue.state.port;
 
-  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
+  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue() ? useNDExAccountValue() : [{undefined, undefined}, undefined];
 
   const importNetwork = () => {
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);
