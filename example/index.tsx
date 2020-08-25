@@ -44,12 +44,10 @@ const App = () => {
   }
 
   const fetchCX = () => {
-    return fetch('http://dev.ndexbio.org/v2/network/67e9e577-9a04-11ea-96e4-525400c25d22?download=true&id_token=eyJhbGciOiJSUzI1NiIsImtpZCI6IjZiYzYzZTlmMThkNTYxYjM0ZjU2NjhmODhhZTI3ZDQ4ODc2ZDgwNzMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiODAyODM5Njk4NTk4LW1ycmQzaXEzamwwNm42YzJmbzFwbW1jOHV1Z3Q5dWtxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiODAyODM5Njk4NTk4LW1ycmQzaXEzamwwNm42YzJmbzFwbW1jOHV1Z3Q5dWtxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA0NjY1OTI2Mzk3NTAzODM5MzIxIiwiZW1haWwiOiJkb3Rhc2VrLmRldkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6InZsVFF3eDZqY0RwS3Q5TkZjUWgzVVEiLCJuYW1lIjoiRGF2aWQgT3Rhc2VrIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdoTnZHSHFoVWJWaTVKNjJsNlYwQ3ZodHdxYTFCU1BVdjlrS0RTTGtnPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkRhdmlkIiwiZmFtaWx5X25hbWUiOiJPdGFzZWsiLCJsb2NhbGUiOiJlbiIsImlhdCI6MTU5ODAzMzA4NSwiZXhwIjoxNTk4MDM2Njg1LCJqdGkiOiI0OGYyMzQyYmRmZTY2YjdiNWJhMjcxMzRiM2VmZWY5NGM0YjAyN2FkIn0.af7cOYGTtAG2ZRvlkOXqC1BBWpXeliR6LyEuv25pzPrUPs9cA1wr-1BrmfNbV_I821wThNwN6o61xikHTZCTgJtmYSMPsdFvRVDJLcDuBYPvKpkcBAxVrS3GJO7nrUxm027POsJ101AN32LjB3NTusEELyeC8WWR2lRUqvZdxgylYa5IypqyGJLTx7l8kVa-2BJFohOY_AIPfH-SeY99h4v0nsNkZPo4g0Ulp59c7F2wF8hZnMaIs3C9zkBpZMP944p9XlsjBpclejtNJWIPAhbODlL34fAX375i5hEgBaotum_jxEEt0cD5viBOB2MG_St2Yit_DqsW47ArVSP7zg')
+    return fetch('http://dev.ndexbio.org/v2/network/67e9e577-9a04-11ea-96e4-525400c25d22')
       .then(function (response) {
         return response.json();
       }).catch( error => { console.log(error)} )
-        
-      
   }
   
   return (

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 import ndexClient from 'ndex-client';
 
@@ -45,7 +45,7 @@ export const CyNDExProvider = ({ port, children }) => {
 
   const pollingStart = () => {
     pollCyREST = true;
-    setTimeout(refresh, 5000);
+    setTimeout(refresh, 1000);
   };
 
   const pollingStop = () => {
