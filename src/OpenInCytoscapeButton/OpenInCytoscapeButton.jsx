@@ -10,6 +10,8 @@ import ndexClient from 'ndex-client';
 import { useCyNDExValue } from '../CyNDExContext'
 import { useNDExAccountValue } from '../NDExAccountContext'
 
+import { openInCytoscape } from '../OpenInCytoscape'
+
 const styles = theme => ({
   button: {
     color: '#EA9123',
@@ -44,6 +46,14 @@ const OpenInCytoscapeButton = props => {
   const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue() ? useNDExAccountValue() : [{undefined, undefined}, undefined];
 
   const importNetwork = () => {
+    openInCytoscape(  
+      cyRESTPort,
+      ndexNetworkProperties,
+      fetchCX,
+      loginInfo,
+      onSuccess,
+      onFailure);
+    /*
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);
     if (ndexNetworkProperties) {
       if (loginInfo) {
@@ -75,7 +85,7 @@ const OpenInCytoscapeButton = props => {
         typeof onFailure !== "undefined" && onFailure(error) 
       });
     }
-
+    */
   }
 
   const {
@@ -116,7 +126,6 @@ const OpenInCytoscapeButton = props => {
           </Icon>
         </Button></span>
       </Tooltip>
-
     </React.Fragment>
   )
 }
