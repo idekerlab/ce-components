@@ -2,6 +2,7 @@ import React from 'react'
 import OpenInCytoscapeButton from '../src/OpenInCytoscapeButton';
 import { CyNDExProvider } from '../src/CyNDExContext';
 import { withKnobs, object } from '@storybook/addon-knobs';
+import { NDExNetworkProperties } from '../src/OpenInCytoscape';
 
 export default {
   title: 'Open In Cytoscape Button',
@@ -9,11 +10,9 @@ export default {
   decorators: [withKnobs],
 }
 
-const sampleNDExData = {
+const sampleNDExData : NDExNetworkProperties = {
     ndexServer: 'http://public.ndexbio.org/v2',
-    uuid: 'b1e9a489-bbe7-11ea-aaef-0ac135e8bacf',
-    username: 'ismbdemo',
-    password: 'ismbdemo2020'
+    uuid: 'b1e9a489-bbe7-11ea-aaef-0ac135e8bacf'
 }
 
 export const UsingFetch = () => {

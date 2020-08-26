@@ -53,39 +53,6 @@ const OpenInCytoscapeButton = props => {
       loginInfo,
       onSuccess,
       onFailure);
-    /*
-    const cyndex = new ndexClient.CyNDEx(cyRESTPort);
-    if (ndexNetworkProperties) {
-      if (loginInfo) {
-        if (loginInfo.isGoogle) {
-          cyndex.setGoogleUser(loginInfo.loginDetails);
-        } else {
-          cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
-        }
-      }
-      const accessKey = ndexNetworkProperties.accessKey;
-      const idToken = ndexNetworkProperties.idToken;
-      cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, idToken)
-        .then(response => {
-          typeof onSuccess !== "undefined" && onSuccess(response.data)
-        })
-        .catch(error => { 
-          typeof onFailure !== "undefined" && onFailure(error) 
-        });
-    } else {
-      fetchCX().then(cx => {
-        cyndex.postCXNetworkToCytoscape(cx)
-          .then(response => {
-            typeof onSuccess !== "undefined" && onSuccess(response.data)
-          })
-          .catch(error => { 
-            typeof onFailure !== "undefined" && onFailure(error) 
-          });
-      }, error => { 
-        typeof onFailure !== "undefined" && onFailure(error) 
-      });
-    }
-    */
   }
 
   const {
