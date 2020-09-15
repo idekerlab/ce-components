@@ -45,6 +45,7 @@ const OpenInCytoscapeButton = props => {
 
   const importNetwork = () => {
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);
+    cyndex.setNDExServer(ndexServerURL);
     if (ndexNetworkProperties) {
       if (loginInfo) {
         if (loginInfo.isGoogle) {
