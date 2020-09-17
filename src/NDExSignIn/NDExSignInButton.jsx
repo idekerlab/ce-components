@@ -17,14 +17,17 @@ const styles = theme => ({
     'line-height': 0
   },
   iconSmall: {
+    color: '#4DA1DE',
     height: '22px',
     width: '22px'
   },
   iconMedium: {
+    color: '#4DA1DE',
     height: '24px',
     width: '24px'
   },
   iconLarge: {
+    color: '#4DA1DE',
     height: '26px',
     width: '26px'
   },
@@ -86,11 +89,11 @@ const NDExSignInButton = props => {
   }
 
   const getNDExAvatar = ()=> {
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.image }></Avatar> 
+  return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.image }>{ loginInfo.loginDetails.image ? "" : loginInfo.loginDetails.fullname ? loginInfo.loginDetails.fullname.trim().substring(0,1) : "A"}</Avatar> 
   }
 
   const getGoogleAvatar = () => {
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.profileObj.imageUrl }></Avatar> 
+    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.profileObj.imageUrl }>{ loginInfo.loginDetails.profileObj.imageUrl ? "" : loginInfo.loginDetails.profileObj.name ? loginInfo.loginDetails.profileObj.name.trim().substring(0,1) : "A"}</Avatar> 
   }
 
   const getIcon = () => {
