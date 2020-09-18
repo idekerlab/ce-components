@@ -1,6 +1,7 @@
 import React from 'react'
 import { Avatar, Button, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
+import { useNDExAccountValue } from '../NDExAccountContext'
 
 const useStyles = makeStyles({
   signInHeader: {
@@ -20,6 +21,9 @@ const useStyles = makeStyles({
 
 const NdexUserInfoPanel = props => {
   const classes = useStyles()
+  
+  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
+
   const { userImage, userName, onLogout } = props
 
   return (
@@ -30,14 +34,15 @@ const NdexUserInfoPanel = props => {
       <Typography variant={'subtitle1'} className={classes.item}>
         You are logged in as {userName}
       </Typography>
-      <Button
+      
+      {loginInfo && !loginInfo.isGoogle && (<Button
         variant={'outlined'}
         className={classes.item}
         color={'secondary'}
         onClick={onLogout}
       >
         Sign Out
-      </Button>
+      </Button>)}
     </div>
   )
 }
