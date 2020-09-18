@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
+
 import { Paper } from '@material-ui/core'
+
+
 import { makeStyles } from '@material-ui/styles'
 import NdexGoogleLoginPanel from './NdexGoogleLoginPanel'
 import NdexCredentialsLoginPanel from './NdexCredentialsLoginPanel'
+
 
 const useStyles = makeStyles({
   root: {
@@ -31,16 +35,15 @@ const NdexLoginPanel = props => {
     onLoginSuccess,
     onSuccess,
     handleCredentialsSignOn,
+    onError,
     handleError,
     error,
-    ndexServer
+    ndexServer,
+    googleSignIn,
+    googleSSO
   } = props
+  
   const [isGoogle, setIsGoogle] = useState(true)
-
-  const onError = (error, googleSSO) => {
-    props.handleError(error)
-    setIsGoogle({ googleSSO })
-  }
 
   return (
     <div className={classes.root}>
@@ -50,6 +53,8 @@ const NdexLoginPanel = props => {
           onLoginSuccess={onLoginSuccess}
           onSuccess={onSuccess}
           ndexServer={ndexServer}
+          googleSignIn={googleSignIn}
+          googleSSO={googleSSO}
         />
       </Paper>
       <Paper className={classes.rightComponent}>

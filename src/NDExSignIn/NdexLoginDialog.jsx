@@ -11,6 +11,9 @@ import {
   Avatar
 } from '@material-ui/core'
 
+import config from './assets/config'
+import { useGoogleLogin } from 'react-google-login';
+
 import NdexUserInfoPanel from './NdexUserInfoPanel'
 import NdexLoginPanel from './NdexLoginPanel'
 import { makeStyles } from '@material-ui/styles'
@@ -67,6 +70,8 @@ const NdexLoginDialog = props => {
     ndexServer
   } = props
 
+
+
   const onLoginSuccess = event => {
     console.log('Login success:', event)
   }
@@ -106,6 +111,48 @@ const NdexLoginDialog = props => {
     setErrorMessage(error)
   }
 
+  const onError = (error, googleSSO) => {
+    props.handleError(error)
+    setIsGoogle({ googleSSO })
+  }
+
+  // Unique ID for each NDEx server
+  let googleSSO = true
+  const serverUrl = props.ndexServer.split('//')[1]
+  const clientId = config.G_CLIENT_ID[serverUrl]
+  if (clientId === undefined || clientId === null) {
+    googleSSO = false
+  }
+ 
+   const onFailure = err => {
+     const message =
+       (err.details &&
+         err.details.startsWith(
+           'Not a valid origin for the client: http://localhost:'
+         )) ||
+       (err.error && err['error']) ||
+       JSON.stringify(err)
+     props.onError(message, false)
+   }
+ 
+   const { signIn, loaded } = useGoogleLogin({
+     clientId: clientId,
+     scope: 'profile email',
+     onSuccess: onGoogleSuccess,
+     onFailure: onFailure,
+     isSignedIn : true
+   })
+ /*
+   if (loaded) {
+     // Check current login status
+     const g = window['gapi'];
+     const user = g.auth2.getAuthInstance().currentUser.get();
+     const id_token = user.getAuthResponse().id_token;
+ 
+     onSuccess(user);
+   }
+ */
+
   const getContent = () => {
     if (loginInfo !== null) {
      
@@ -136,9 +183,12 @@ const NdexLoginDialog = props => {
         onLogout={onLogout}
         handleCredentialsSignOn={handleCredentialsSignOn}
         onSuccess={onGoogleSuccess}
+        onError={onError}
         handleError={handleError}
         error={errorMessage}
         ndexServer={ndexServer}
+        googleSignIn={signIn}
+        googleSSO={googleSSO}
       />
     )
   }

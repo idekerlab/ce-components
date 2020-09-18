@@ -2,7 +2,6 @@ import React from 'react'
 import GoogleLogin from 'react-google-login'
 import GoogleLogo from './assets/images/google-logo.svg'
 import GoogleLogoDisabled from './assets/images/google-logo-disabled.svg'
-import config from './assets/config'
 import { Button } from '@material-ui/core'
 import HtmlTooltip from './HtmlTooltip'
 import Typography from '@material-ui/core/Typography'
@@ -21,26 +20,7 @@ const useStyles = makeStyles({
 const NdexGoogleLoginPanel = props => {
   const classes = useStyles()
 
-  // Unique ID for each NDEx server
-  let googleSSO = true
-  const serverUrl = props.ndexServer.split('//')[1]
-  const clientId = config.G_CLIENT_ID[serverUrl]
-  if (clientId === undefined || clientId === null) {
-    googleSSO = false
-  }
-
-  const onFailure = err => {
-    const message =
-      (err.details &&
-        err.details.startsWith(
-          'Not a valid origin for the client: http://localhost:'
-        )) ||
-      (err.error && err['error']) ||
-      JSON.stringify(err)
-    props.onError(message, false)
-  }
-
-  const { onSuccess } = props
+  const { googleSignIn, googleSSO } = props;
 
   const clsName = googleSSO
     ? 'google-sign-in-button'
@@ -71,26 +51,20 @@ const NdexGoogleLoginPanel = props => {
       }
     >
       <div className={classes.googlePanel}>
-        <GoogleLogin
-          clientId={clientId}
-          render={renderProps => (
+        
             <Button
               id="googleSignInButtonId"
               disabled={!googleSSO}
               className={clsName}
               title={title}
-              onClick={renderProps.onClick}
+              onClick={googleSignIn}
             >
               <span className="google-sign-in-button-span">
                 <img src={logo} alt="" className="googleLogo" />
                 <div className="googleSignInText">Sign in with Google</div>
               </span>
             </Button>
-          )}
-          buttonText="Login"
-          onSuccess={onSuccess}
-          onFailure={onFailure}
-        />
+          
       </div>
     </HtmlTooltip>
   )
