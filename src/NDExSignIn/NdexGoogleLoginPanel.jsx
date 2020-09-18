@@ -2,12 +2,10 @@ import React from 'react'
 import GoogleLogin from 'react-google-login'
 import GoogleLogo from './assets/images/google-logo.svg'
 import GoogleLogoDisabled from './assets/images/google-logo-disabled.svg'
-import config from './assets/config'
 import { Button } from '@material-ui/core'
 import HtmlTooltip from './HtmlTooltip'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
-import { useGoogleLogin } from 'react-google-login';
 
 const useStyles = makeStyles({
   googlePanel: {
@@ -22,44 +20,8 @@ const useStyles = makeStyles({
 const NdexGoogleLoginPanel = props => {
   const classes = useStyles()
 
-  // Unique ID for each NDEx server
-  let googleSSO = true
-  const serverUrl = props.ndexServer.split('//')[1]
-  const clientId = config.G_CLIENT_ID[serverUrl]
-  if (clientId === undefined || clientId === null) {
-    googleSSO = false
-  }
+  const { googleSignIn, googleSSO } = props;
 
-  const { onSuccess } = props;
-
-  const onFailure = err => {
-    const message =
-      (err.details &&
-        err.details.startsWith(
-          'Not a valid origin for the client: http://localhost:'
-        )) ||
-      (err.error && err['error']) ||
-      JSON.stringify(err)
-    props.onError(message, false)
-  }
-
-  const { signIn, loaded } = useGoogleLogin({
-    clientId: clientId,
-    scope: 'profile email',
-    onSuccess: onSuccess,
-    onFailure: onFailure,
-    isSignedIn : true
-  })
-/*
-  if (loaded) {
-    // Check current login status
-    const g = window['gapi'];
-    const user = g.auth2.getAuthInstance().currentUser.get();
-    const id_token = user.getAuthResponse().id_token;
-
-    onSuccess(user);
-  }
-*/
   const clsName = googleSSO
     ? 'google-sign-in-button'
     : 'google-sign-in-button googleButtonDisabled'
@@ -95,7 +57,7 @@ const NdexGoogleLoginPanel = props => {
               disabled={!googleSSO}
               className={clsName}
               title={title}
-              onClick={signIn}
+              onClick={googleSignIn}
             >
               <span className="google-sign-in-button-span">
                 <img src={logo} alt="" className="googleLogo" />
