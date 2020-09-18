@@ -7,6 +7,7 @@ import { Button } from '@material-ui/core'
 import HtmlTooltip from './HtmlTooltip'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
+import { useGoogleLogin } from 'react-google-login';
 
 const useStyles = makeStyles({
   googlePanel: {
@@ -29,6 +30,8 @@ const NdexGoogleLoginPanel = props => {
     googleSSO = false
   }
 
+  const { onSuccess } = props;
+
   const onFailure = err => {
     const message =
       (err.details &&
@@ -40,8 +43,23 @@ const NdexGoogleLoginPanel = props => {
     props.onError(message, false)
   }
 
-  const { onSuccess } = props
+  const { signIn, loaded } = useGoogleLogin({
+    clientId: clientId,
+    scope: 'profile email',
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    isSignedIn : true
+  })
+/*
+  if (loaded) {
+    // Check current login status
+    const g = window['gapi'];
+    const user = g.auth2.getAuthInstance().currentUser.get();
+    const id_token = user.getAuthResponse().id_token;
 
+    onSuccess(user);
+  }
+*/
   const clsName = googleSSO
     ? 'google-sign-in-button'
     : 'google-sign-in-button googleButtonDisabled'
@@ -71,26 +89,20 @@ const NdexGoogleLoginPanel = props => {
       }
     >
       <div className={classes.googlePanel}>
-        <GoogleLogin
-          clientId={clientId}
-          render={renderProps => (
+        
             <Button
               id="googleSignInButtonId"
               disabled={!googleSSO}
               className={clsName}
               title={title}
-              onClick={renderProps.onClick}
+              onClick={signIn}
             >
               <span className="google-sign-in-button-span">
                 <img src={logo} alt="" className="googleLogo" />
                 <div className="googleSignInText">Sign in with Google</div>
               </span>
             </Button>
-          )}
-          buttonText="Login"
-          onSuccess={onSuccess}
-          onFailure={onFailure}
-        />
+          
       </div>
     </HtmlTooltip>
   )
