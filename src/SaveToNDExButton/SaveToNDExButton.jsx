@@ -42,6 +42,8 @@ const SaveToNDExButton = props => {
   const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
 
   const {
+    disabled,
+    tooltip,
     onSuccess,
     onFailure,
     variant,
@@ -85,14 +87,18 @@ const SaveToNDExButton = props => {
       
       <Tooltip
         disableFocusListener
-        title="Save Network to NDEx"
+        title= { tooltip 
+          ? tooltip 
+          : disabled || !loginInfo 
+            ?  undefined 
+            : "Save to NDEx" }
         placement="bottom"
       > 
         <span><Button //Do not add any spaces between the span and button tags. Tooltip interprets these as an array of elements instead of nested elements and will throw an exception.
           className={classes.button}
           variant={variant}
           onClick={onClick}
-          disabled={!loginInfo}
+          disabled={ disabled || !loginInfo}
           size={size}
         >
           <SaveIcon className={iconClassName(size)}/>
