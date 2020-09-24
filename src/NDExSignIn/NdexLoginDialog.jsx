@@ -92,11 +92,48 @@ const NdexLoginDialog = props => {
     onSuccessLogin(loginInfo, userImage)
   }
 
-  const onGoogleSuccess = userInfo => {
-    const loginInfo = { isGoogle: true, loginDetails: userInfo }
-    const userImage = userInfo.profileObj.imageUrl
+  const onGoogleSuccess = res => {
+    const loginInfo = { isGoogle: true, loginDetails: res }
+    const userImage = res.profileObj.imageUrl
+    refreshTokenSetup(res);
     onSuccessLogin(loginInfo, userImage)
   }
+
+  const refreshTokenSetup = (res) => {
+
+    let refreshTiming = (res.expires_in || 3600 - 5 * 60) * 1000;
+    console.log('Will refresh auth token in ' + refreshTiming);
+
+    const refreshToken = async() => { 
+      const newAuthRes = await res.reloadAuthResponse();
+      refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+      console.log('newAuthRes: ', newAuthRes );
+      console.log('Will refresh auth token in ' + refreshTiming);
+      onTokenRefresh(res, newAuthRes);
+      setTimeout(refreshToken, refreshTiming);
+    }
+
+    setTimeout(refreshToken, refreshTiming);
+  }
+
+  const onTokenRefresh = (res, authResponse) => {
+    const loginDetails = res;
+    console.log("Login Details", loginDetails);
+
+    let refreshedLoginDetails = Object.assign({}, loginDetails);
+    
+    refreshedLoginDetails['id_token'] = authResponse.id_token;
+
+    console.log("Refreshed Login Details", refreshedLoginDetails);
+
+    const loginInfo = { isGoogle: true, loginDetails: refreshedLoginDetails };
+
+    dispatch({
+      type: 'setLoginInfo',
+      loginInfo: loginInfo
+    })
+    onLoginStateUpdated(loginInfo);
+  };
 
   const onSuccessLogin = (loginInfo, userImage) => {
     dispatch({
