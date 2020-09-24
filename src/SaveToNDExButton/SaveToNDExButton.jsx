@@ -55,7 +55,7 @@ const SaveToNDExButton = props => {
     const ndex = new ndexClient.NDEx(ndexServerURL + '/v2');
     if (loginInfo) {
       if (loginInfo.isGoogle) {
-        ndex.setGoogleUser(loginInfo.loginDetails);
+        ndex.setAuthToken(loginInfo.loginDetails.tokenId);
       } else {
         ndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
       }

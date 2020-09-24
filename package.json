@@ -63,7 +63,9 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "ndex-client": "https://github.com/ndexbio/ndex-js-client",
-    "react-google-login": "^5.1.21"
+    "@rollup/plugin-image": "^2.0.5",
+    "ndex-client": "../ndex-js-client",
+    "react-google-login": "^5.1.21",
+    "rollup-plugin-postcss": "^3.1.5"
   }
 }

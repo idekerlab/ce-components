@@ -49,7 +49,7 @@ const OpenInCytoscapeButton = props => {
     if (ndexNetworkProperties) {
       if (loginInfo) {
         if (loginInfo.isGoogle) {
-          cyndex.setGoogleUser(loginInfo.loginDetails);
+          cyndex.setAuthToken(loginInfo.loginDetails.tokenId);
         } else {
           cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
         }
