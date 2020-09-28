@@ -35,14 +35,14 @@ const NdexUserInfoPanel = props => {
         You are logged in as {userName}
       </Typography>
       
-      {loginInfo && !loginInfo.isGoogle && (<Button
+      <Button
         variant={'outlined'}
         className={classes.item}
         color={'secondary'}
         onClick={onLogout}
       >
         Sign Out
-      </Button>)}
+      </Button>
     </div>
   )
 }
