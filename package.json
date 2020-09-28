@@ -20,7 +20,9 @@
     "build-storybook": "build-storybook"
   },
   "peerDependencies": {
-    "react": ">=16.13.1"
+    "react": ">=16.13.1",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1"
   },
   "husky": {
     "hooks": {
@@ -61,8 +63,6 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
     "@rollup/plugin-image": "^2.0.5",
     "ndex-client": "../ndex-js-client",
     "react-google-login": "^5.1.21",
