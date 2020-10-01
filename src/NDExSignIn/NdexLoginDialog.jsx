@@ -209,6 +209,8 @@ const NdexLoginDialog = props => {
 
           if (data.error !== null) {
             setErrorMessage(data.error.message)
+            setLoginInfo(null);
+            onLoginStateUpdated(null)
           } else {
             handleCredentialsSignOn({
               id: loggedInUser.userName,
@@ -222,39 +224,12 @@ const NdexLoginDialog = props => {
         })
       } else {
         // Check current login status
-        
-        
-        const GoogleAuth = window.gapi.auth2.getAuthInstance()
-       
-        console.log('GoogleAuth isSignedIn', GoogleAuth.isSignedIn.get());
-        let res = GoogleAuth.currentUser.get();
-        
-        if (res) {
-         
-          const basicProfile = res.getBasicProfile()
-          const authResponse = res.getAuthResponse()
-          res.googleId = basicProfile.getId()
-          res.tokenObj = authResponse
-          res.tokenId = authResponse.id_token
-          res.accessToken = authResponse.access_token
-          res.profileObj = {
-            googleId: basicProfile.getId(),
-            imageUrl: basicProfile.getImageUrl(),
-            email: basicProfile.getEmail(),
-            name: basicProfile.getName(),
-            givenName: basicProfile.getGivenName(),
-            familyName: basicProfile.getFamilyName()
-          }
-
-          if (res.tokenId) {
-            onGoogleSuccess(res);
-          }
+        if (!signedIn) {
+          setLoginInfo(null);
+          onLoginStateUpdated(null)
         }
+        //const GoogleAuth = window.gapi.auth2.getAuthInstance()
       }
-      //const id_token = user.getAuthResponse().id_token;
-    
-
-    //onSuccess(user);
   }
 
   const { signIn, loaded } = useGoogleLogin({

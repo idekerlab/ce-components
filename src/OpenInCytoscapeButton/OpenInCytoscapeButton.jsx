@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Button from '@material-ui/core/Button'
 import Icon from '@material-ui/core/Icon'
 import logo from '../assets/images/cytoscape-logo.svg'
@@ -8,7 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import ndexClient from 'ndex-client';
 
 import { useCyNDExValue } from '../CyNDExContext'
-import { useNDExAccountValue } from '../NDExAccountContext'
+import { NDExAccountContext } from '../NDExAccountContext'
 
 const styles = theme => ({
   button: {
@@ -41,7 +41,9 @@ const OpenInCytoscapeButton = props => {
   const cyRESTAvailable = cyNDExValue.state.available;
   const cyRESTPort = cyNDExValue.state.port;
 
-  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue() ? useNDExAccountValue() : [{undefined, undefined}, undefined];
+  const ndexAccountContext = useContext(NDExAccountContext);
+
+  const { ndexServerURL, loginInfo } = ndexAccountContext ? ndexAccountContext : {undefined, undefined};
 
   const importNetwork = () => {
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Button from '@material-ui/core/Button'
 import Icon from '@material-ui/core/Icon'
 import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import SaveIcon from '@material-ui/icons/Save';
-import { useNDExAccountValue } from '../NDExAccountContext'
+import { NDExAccountContext } from '../NDExAccountContext'
 import ndexClient from 'ndex-client';
 
 
@@ -39,7 +39,7 @@ const SaveToNDExButton = props => {
 
   const { classes } = props;
 
-  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
+  const {ndexServerURL, loginInfo } = useContext(NDExAccountContext); 
 
   const {
     disabled,

@@ -5,7 +5,7 @@ export const NDExAccountContext = createContext<Partial<NDExAccountModel>>({});
 
 export const NDExAccountProvider = ({ndexServerURL, children}) =>{
   
-  const [loginInfo, setLoginInfo] = useState(undefined);
+  const [loginInfo, setLoginInfo] = useState(null);
 
   const defState : NDExAccountModel = {
     ndexServerURL,
