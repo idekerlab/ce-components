@@ -13,10 +13,18 @@ const useStyles = makeStyles({
   ndexAccountGreeting: {
     flexGrow: 1
   },
+  largeAvatar: {
+    marginRight: '1em',
+    width: '6em',
+    height: '6em'
+  },
   item: {
     marginRight: '1em'
   },
-  avatar: {}
+  rightItem: {
+    marginLeft: '1em',
+    marginRight: '1em'
+  }
 })
 
 const NdexUserInfoPanel = props => {
@@ -26,18 +34,23 @@ const NdexUserInfoPanel = props => {
 
   const { userImage, userName, onLogout } = props
 
+  const myAccountURL = 'http://dev.ndexbio.org/#/myAccount';
+
   return (
     <div className={classes.signInHeader}>
-      <Avatar className={classes.item} src={userImage}>
+      <Avatar className={classes.largeAvatar} src={userImage}>
         U
-      </Avatar>
+      </Avatar><div className={ classes.ndexAccountGreeting }>
       <Typography variant={'subtitle1'} className={classes.item}>
         You are logged in as {userName}
       </Typography>
-      
+      <Button
+        variant={'outlined'} 
+        href={ myAccountURL }>Go to My Account</Button> 
+      </div>
       <Button
         variant={'outlined'}
-        className={classes.item}
+        className={classes.rightItem}
         color={'secondary'}
         onClick={onLogout}
       >
