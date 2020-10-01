@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 
 import {
   Dialog,
@@ -20,7 +20,7 @@ import { makeStyles } from '@material-ui/styles'
 
 import NdexLogo from './assets/images/ndex-logo.svg'
 
-import { useNDExAccountValue } from '../NDExAccountContext'
+import { NDExAccountContext } from '../NDExAccountContext'
 
 import { validateLogin } from './validateCredentials'
 
@@ -63,7 +63,7 @@ const useStyles = makeStyles({
 const NdexLoginDialog = props => {
   const classes = useStyles()
 
-  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
+  const {ndexServerURL, loginInfo, setLoginInfo} = useContext(NDExAccountContext);
 
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -75,39 +75,9 @@ const NdexLoginDialog = props => {
     ndexServer
   } = props
 
-  useEffect(() => {
-    checkBasicLogin();
-  }, []);
+  console.log("NDEx login dialog init.");
 
-  const checkBasicLogin = () => {
-    const loggedInUserString = window.localStorage.getItem('loggedInUser');
 
-    if (loggedInUserString) {
-      console.log("LoggedInUser: " + loggedInUserString);
-      const loggedInUser = JSON.parse(loggedInUserString);
-
-      validateLogin(loggedInUser.userName, loggedInUser.token, ndexServer).then(data => {
-        console.log('auto login returned Validation:', data)
-
-        setTimeout(() => {
-          //setLoading(false)
-
-          if (data.error !== null) {
-            setErrorMessage(data.error.message)
-          } else {
-            handleCredentialsSignOn({
-              id: loggedInUser.userName,
-              password: loggedInUser.token,
-              ndexServer,
-              fullName: data.userData.firstName + ' ' + data.userData.lastName,
-              image: data.userData.image,
-              details: data.userData
-            })
-          }
-        }, 500)
-      })
-    }
-  }
 
   const onLoginSuccess = event => {
     console.log('Login success:', event)
@@ -127,10 +97,7 @@ const NdexLoginDialog = props => {
     else {
       window.localStorage.removeItem(LOGGED_IN_USER);
     }
-    dispatch({
-      type: 'setLoginInfo',
-      loginInfo: null
-    })
+    setLoginInfo(null);
     onLoginStateUpdated(null)
   }
 
@@ -152,11 +119,8 @@ const NdexLoginDialog = props => {
   }
 
   const onGoogleSuccess = res => {
-    if (loginInfo && !loginInfo.isGoogle) {
-      console.log("Found loginInfo: ", loginInfo);
-      //Don't overwrite existing NDEx logins
-      return
-    }
+    console.log('onGoogleSuccess called');
+   
     const newLoginInfo = { isGoogle: true, loginDetails: res }
     const userImage = res.profileObj.imageUrl
     refreshTokenSetup(res);
@@ -192,18 +156,12 @@ const NdexLoginDialog = props => {
 
     const loginInfo = { isGoogle: true, loginDetails: refreshedLoginDetails };
 
-    dispatch({
-      type: 'setLoginInfo',
-      loginInfo: loginInfo
-    })
+    setLoginInfo(loginInfo);
     onLoginStateUpdated(loginInfo);
   };
 
   const onSuccessLogin = (loginInfo, userImage) => {
-    dispatch({
-      type: 'setLoginInfo',
-      loginInfo: loginInfo
-    })
+    setLoginInfo(loginInfo);
     onLoginStateUpdated(loginInfo)
   }
 
@@ -236,12 +194,77 @@ const NdexLoginDialog = props => {
     props.onError(message, false)
   }
 
+  const onAutoLoadFinished = (signedIn) => {
+    
+    console.log('onAutoLoadFinished(' + signedIn + ')');
+  
+      const loggedInUserString = window.localStorage.getItem('loggedInUser');
+
+      if (loggedInUserString) {
+        console.log("LoggedInUser: " + loggedInUserString);
+        const loggedInUser = JSON.parse(loggedInUserString);
+
+        validateLogin(loggedInUser.userName, loggedInUser.token, ndexServer).then(data => {
+          console.log('auto login returned Validation:', data)
+
+          if (data.error !== null) {
+            setErrorMessage(data.error.message)
+          } else {
+            handleCredentialsSignOn({
+              id: loggedInUser.userName,
+              password: loggedInUser.token,
+              ndexServer,
+              fullName: data.userData.firstName + ' ' + data.userData.lastName,
+              image: data.userData.image,
+              details: data.userData
+            })
+          }
+        })
+      } else {
+        // Check current login status
+        
+        
+        const GoogleAuth = window.gapi.auth2.getAuthInstance()
+       
+        console.log('GoogleAuth isSignedIn', GoogleAuth.isSignedIn.get());
+        let res = GoogleAuth.currentUser.get();
+        
+        if (res) {
+         
+          const basicProfile = res.getBasicProfile()
+          const authResponse = res.getAuthResponse()
+          res.googleId = basicProfile.getId()
+          res.tokenObj = authResponse
+          res.tokenId = authResponse.id_token
+          res.accessToken = authResponse.access_token
+          res.profileObj = {
+            googleId: basicProfile.getId(),
+            imageUrl: basicProfile.getImageUrl(),
+            email: basicProfile.getEmail(),
+            name: basicProfile.getName(),
+            givenName: basicProfile.getGivenName(),
+            familyName: basicProfile.getFamilyName()
+          }
+
+          if (res.tokenId) {
+            onGoogleSuccess(res);
+          }
+        }
+      }
+      //const id_token = user.getAuthResponse().id_token;
+    
+
+    //onSuccess(user);
+  }
+
   const { signIn, loaded } = useGoogleLogin({
     clientId: clientId,
     scope: 'profile email',
     onSuccess: onGoogleSuccess,
     onFailure: onFailure,
-    isSignedIn: true
+    onAutoLoadFinished : onAutoLoadFinished,
+    isSignedIn: true,
+    fetchBasicProfile: true
   })
 
   const { signOut } = useGoogleLogout({
@@ -249,16 +272,9 @@ const NdexLoginDialog = props => {
     onLogoutSuccess: onGoogleLogoutSuccess,
     onFailure: onFailure
   })
-  /*
-    if (loaded) {
-      // Check current login status
-      const g = window['gapi'];
-      const user = g.auth2.getAuthInstance().currentUser.get();
-      const id_token = user.getAuthResponse().id_token;
+
   
-      onSuccess(user);
-    }
-  */
+
 
   const getContent = () => {
     if (loginInfo !== null) {
