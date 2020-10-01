@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import NdexLoginDialog from './NdexLoginDialog'
-import { useNDExAccountValue } from '../NDExAccountContext'
+import { NDExAccountContext } from '../NDExAccountContext'
 import Avatar from '@material-ui/core/Avatar';
 
 const styles = theme => ({
@@ -50,7 +50,7 @@ const NDExSignInButton = props => {
 
   const { classes } = props;
 
-  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
+  const {ndexServerURL, loginInfo, setLoginInfo} = useContext(NDExAccountContext);
 
   const { onLoginStateUpdated } = props
 

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Avatar, Button, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
-import { useNDExAccountValue } from '../NDExAccountContext'
+import { NDExAccountContext } from '../NDExAccountContext'
 
 const useStyles = makeStyles({
   signInHeader: {
@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 const NdexUserInfoPanel = props => {
   const classes = useStyles()
   
-  const [{ ndexServerURL, loginInfo }, dispatch] = useNDExAccountValue();
+  const {ndexServerURL, loginInfo, setLoginInfo} = useContext(NDExAccountContext);
 
   const { userImage, userName, onLogout } = props
 
