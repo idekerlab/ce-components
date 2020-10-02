@@ -46,8 +46,7 @@ const NdexUserInfoPanel = props => {
       <Button
         variant={'outlined'} 
         href={ myAccountURL }
-        rel="noopener"
-        target="_blank">Go to My Account</Button> }
+        rel="noopener">Go to My Account</Button> }
       </div>
       <Button
         variant={'outlined'}

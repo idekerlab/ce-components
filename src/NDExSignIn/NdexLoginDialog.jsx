@@ -24,7 +24,6 @@ import { NDExAccountContext } from '../NDExAccountContext'
 
 import { validateLogin } from './validateCredentials'
 
-
 const DEFAULT_TITLE = 'Sign in to your NDEx Account'
 const SUBTITLE = 'Choose one of the following sign in methods:'
 const LOGGED_IN_USER = 'loggedInUser'
@@ -78,8 +77,6 @@ const NdexLoginDialog = props => {
 
   console.log("NDEx login dialog init.");
 
-
-
   const onLoginSuccess = event => {
     console.log('Login success:', event)
   }
@@ -87,8 +84,6 @@ const NdexLoginDialog = props => {
   const onGoogleLogoutSuccess = () => {
     console.log("Google logged out");
   }
-
-
 
   const onLogout = () => {
     console.log('Logout:' + loginInfo.isGoogle);
