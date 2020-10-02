@@ -32,9 +32,7 @@ const NdexUserInfoPanel = props => {
   
   const {ndexServerURL, loginInfo, setLoginInfo} = useContext(NDExAccountContext);
 
-  const { userImage, userName, onLogout } = props
-
-  const myAccountURL = 'http://dev.ndexbio.org/#/myAccount';
+  const { userImage, userName, onLogout, myAccountURL } = props
 
   return (
     <div className={classes.signInHeader}>
@@ -44,9 +42,12 @@ const NdexUserInfoPanel = props => {
       <Typography variant={'subtitle1'} className={classes.item}>
         You are logged in as {userName}
       </Typography>
+      { myAccountURL && 
       <Button
         variant={'outlined'} 
-        href={ myAccountURL }>Go to My Account</Button> 
+        href={ myAccountURL }
+        rel="noopener"
+        target="_blank">Go to My Account</Button> }
       </div>
       <Button
         variant={'outlined'}

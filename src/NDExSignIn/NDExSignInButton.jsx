@@ -52,7 +52,7 @@ const NDExSignInButton = props => {
 
   const {ndexServerURL, loginInfo, setLoginInfo} = useContext(NDExAccountContext);
 
-  const { onLoginStateUpdated } = props
+  const { onLoginStateUpdated, myAccountURL } = props
 
   let onUpdate = DEFAULT_HANDLER
   if (onLoginStateUpdated !== null && onLoginStateUpdated !== undefined) {
@@ -124,6 +124,7 @@ const NDExSignInButton = props => {
         isOpen={isOpen}
         ndexServer={ndexServerURL}
         onLoginStateUpdated={onUpdate}
+        myAccountURL = {myAccountURL}
       />
     </React.Fragment>
   )
