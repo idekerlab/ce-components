@@ -72,7 +72,8 @@ const NdexLoginDialog = props => {
     isOpen,
     setDialogState,
     onLoginStateUpdated,
-    ndexServer
+    ndexServer,
+    myAccountURL
   } = props
 
   console.log("NDEx login dialog init.");
@@ -270,6 +271,7 @@ const NdexLoginDialog = props => {
           userImage={userImage}
           onLogout={onLogout}
           ndexServer={ndexServer}
+          myAccountURL={myAccountURL}
         />
       )
     }
