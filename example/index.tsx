@@ -68,7 +68,6 @@ const App = () => {
     <br />
     <OpenInCytoscapeButton variant="outlined" ndexNetworkProperties={ndexNetworkProperties} onSuccess={onSuccess} onFailure={onFailure}></OpenInCytoscapeButton>
     <br /><br />
-        <Thing />
       </NDExAccountProvider>
     </CyNDExProvider>
   );
