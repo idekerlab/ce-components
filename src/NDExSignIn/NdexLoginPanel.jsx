@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Paper } from '@material-ui/core'
+import { Paper, Divider } from '@material-ui/core'
 
 
 import { makeStyles } from '@material-ui/styles'
@@ -10,7 +10,7 @@ import NdexCredentialsLoginPanel from './NdexCredentialsLoginPanel'
 
 const useStyles = makeStyles({
   root: {
-    height: '14.5em',
+    height: '16em',
     margin: 0,
     padding: '0.6em',
     display: 'flex',
@@ -40,7 +40,8 @@ const NdexLoginPanel = props => {
     error,
     ndexServer,
     googleSignIn,
-    googleSSO
+    googleSSO,
+    setContentMode
   } = props
   
   const [isGoogle, setIsGoogle] = useState(true)
@@ -57,6 +58,7 @@ const NdexLoginPanel = props => {
           googleSSO={googleSSO}
         />
       </Paper>
+      <Divider orientation="vertical" flexItem />
       <Paper className={classes.rightComponent}>
         <NdexCredentialsLoginPanel
           onLoginSuccess={onLoginSuccess}
@@ -64,6 +66,7 @@ const NdexLoginPanel = props => {
           handleError={handleError}
           error={error}
           ndexServer={ndexServer}
+          setContentMode={setContentMode}
         />
       </Paper>
     </div>
