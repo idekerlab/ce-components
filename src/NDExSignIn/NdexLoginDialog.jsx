@@ -24,7 +24,8 @@ import { NDExAccountContext } from '../NDExAccountContext'
 
 import { validateLogin } from './validateCredentials'
 
-
+import NdexSignUpPanel from './NdexSignUpPanel'
+import ForgotPasswordPanel from './ForgotPasswordPanel'
 
 const LOGGED_IN_USER = 'loggedInUser'
 
@@ -301,10 +302,10 @@ const NdexLoginDialog = props => {
         />
       )
       case content_mode.SIGN_UP: return (
-        <a onClick={() => { setContentMode(content_mode.SIGN_IN) }} > SIGN_UP back </a>
+       <NdexSignUpPanel ndexServer={ndexServer}/>
       )
       case content_mode.FORGOT_PASSWORD: return (
-        <a onClick={() => { setContentMode(content_mode.SIGN_IN) }} > FORGOT_PASSWORD back </a>
+        <ForgotPasswordPanel ndexServer={ndexServer}/>
       )
     }
   }

@@ -135,17 +135,15 @@ const NdexCredentialsLoginPanel = props => {
         Sign In with NDEx
       </Button>
 
-
-
-        <Typography variant={'body1'}>
-          <a href="#" onClick={ () => {setContentMode('FORGOT_PASSWORD')}}>Forgot your password?</a>
-          <br/>
-          <br/>
+      <Typography variant={'body1'}>
+        <a href="#" onClick={() => { setContentMode('FORGOT_PASSWORD') }}>Forgot your password?</a>
+        <br />
+        <br />
           Need an account?{' '}
-          <a href="http://ndexbio.org">Click here to sign up!</a>
-        </Typography>
+        <a href="#" onClick={() => { setContentMode('SIGN_UP') }}>Click here to sign up!</a>
+      </Typography>
 
-        {errorMessage ? (
+      {errorMessage ? (
         <div className={classes.errorPanel}>
           <ErrorOutline color={'error'} />
           <Typography
@@ -157,8 +155,8 @@ const NdexCredentialsLoginPanel = props => {
           </Typography>
         </div>
       ) : (
-        <div className={classes.blank} />
-      )}
+          <div className={classes.blank} />
+        )}
       <div className={classes.bottom}>
         <Divider />
       </div>
