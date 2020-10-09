@@ -24,7 +24,7 @@ const ForgotPasswordPanel = () => {
 
   const [email, setEmail] = useState('');
   
-  //const [resetError, setResetError] = useState(null);
+  const [resetError, setResetError] = useState(null);
 
   const handleEmailChange = (evt) => {
     const email: string = evt.target.value
@@ -35,7 +35,7 @@ const ForgotPasswordPanel = () => {
     resetPassword(ndexServerURL, 'v2', email).then((result) => {
       console.log("success reset: " + result)
     }).catch((error) => {
-      console.log("failed reset: " + error);
+      setResetError(error)
     })
   }
 
@@ -43,12 +43,12 @@ const ForgotPasswordPanel = () => {
     <div className={classes.signInHeader}>
       <TextField
         error={email.trim().length < 0}
-        helperText={'Account Name or E-Mail'}
+        helperText={resetError ? resetError : undefined}
         name="id"
         type="text"
         placeholder=""
         required
-        title=""
+        label='Account Name or E-Mail'
         autoComplete="username"
         value={email}
         onChange={handleEmailChange}
