@@ -35,7 +35,7 @@ export function signUp(ndexServer, api) {
   console.log("Sign Up!", ndexServer + api)
 }
 
-export function resetPassword(ndexServer, api, emailAddress) {
+export async function resetPassword(ndexServer, api, emailAddress) {
 
   var emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -47,6 +47,6 @@ export function resetPassword(ndexServer, api, emailAddress) {
     var apiCall = ndexServer + path;
     return callApi(apiCall);
   } else {
-    return null
+    throw('Not a valid e-mail')
   }
 }

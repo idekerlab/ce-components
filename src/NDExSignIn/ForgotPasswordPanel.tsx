@@ -16,7 +16,6 @@ const useStyles = makeStyles({
   }
 })
 
-const emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const ForgotPasswordPanel = () => {
   const classes = useStyles()
@@ -24,26 +23,26 @@ const ForgotPasswordPanel = () => {
   const { ndexServerURL } = useContext(NDExAccountContext);
 
   const [email, setEmail] = useState('');
-  const [isEmailValid, setEmailValid] = useState<boolean>(false);
+  
+  //const [resetError, setResetError] = useState(null);
 
   const handleEmailChange = (evt) => {
     const email: string = evt.target.value
     setEmail(email)
-    if (emailRE.test(String(email).toLowerCase())) {
-      setEmailValid(true)
-    } else {
-      setEmailValid(false)
-    }
   }
 
   const handleResetPassword = () => {
-    resetPassword(ndexServerURL, 'v2', email)
+    resetPassword(ndexServerURL, 'v2', email).then((result) => {
+      console.log("success reset: " + result)
+    }).catch((error) => {
+      console.log("failed reset: " + error);
+    })
   }
 
   return (
     <div className={classes.signInHeader}>
       <TextField
-        error={!isEmailValid && email.trim().length > 0}
+        error={email.trim().length < 0}
         helperText={'Account Name or E-Mail'}
         name="id"
         type="text"
@@ -56,7 +55,7 @@ const ForgotPasswordPanel = () => {
       />
       <Button
         variant={'contained'}
-        disabled={!isEmailValid && email.trim().length > 0}
+        disabled={email.trim().length < 1}
         onClick={handleResetPassword} >Reset Password</Button>
     </div>
   )
