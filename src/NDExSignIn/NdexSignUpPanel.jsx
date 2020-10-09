@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Avatar, Button, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { NDExAccountContext } from '../NDExAccountContext'
-import { getUserByEmail } from '../api/ndex'
+import { signUp } from '../api/ndex'
 
 const useStyles = makeStyles({
   signInHeader: {
@@ -22,9 +22,7 @@ const NdexSignUpPanel = props => {
   const {ndexServerURL } = useContext(NDExAccountContext);
 
   const signUpAction = () => {
-    getUserByEmail(ndexServerURL, 'v2',  'dotasek.dev@gmail.com').then((response)=> {
-      console.log('Response body: ', response.parsedBody)
-    });
+    signUp(ndexServerURL, 'v2')
   }
 
   return (

@@ -31,11 +31,22 @@ export async function callApi<T>(request: RequestInfo): Promise<HttpResponse<T>>
   return response
 }
 
-export function getUserByEmail (ndexServer, api, emailAddress) {
-   // Server API: Get User By Email
-   // GET /user?email={emailAddress}
+export function signUp(ndexServer, api) {
+  console.log("Sign Up!", ndexServer + api)
+}
 
-  var path = '/' + api + '/user?email=' + emailAddress;
-  var apiCall = ndexServer + path;
-  return callApi(apiCall);
+export function resetPassword(ndexServer, api, emailAddress) {
+
+  var emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  if (emailRE.test(String(emailAddress).toLowerCase())) {
+    // Server API: Get User By Email
+    // GET /user?email={emailAddress}
+
+    var path = '/' + api + '/user?email=' + emailAddress;
+    var apiCall = ndexServer + path;
+    return callApi(apiCall);
+  } else {
+    return null
+  }
 }
