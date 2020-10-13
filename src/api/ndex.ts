@@ -16,8 +16,13 @@
 
 import HttpResponse from './HttpResponse'
 
-export async function callApi<T>(request: RequestInfo): Promise<HttpResponse<T>> {
-  const response: HttpResponse<T> = await fetch(request)
+import {
+  useState,
+  useCallback
+} from 'react';
+
+export async function callApi<T>(request: RequestInfo, settings): Promise<HttpResponse<T>> {
+  const response: HttpResponse<T> = await fetch(request, settings)
 
   try {
     response.parsedBody = await response.json()
@@ -35,18 +40,83 @@ export function signUp(ndexServer, api) {
   console.log("Sign Up!", ndexServer + api)
 }
 
-export async function resetPassword(ndexServer, api, emailAddress) {
+export const getUserByEmail = async (ndexServer, api, emailAddress) => {
+  const path = '/' + api + '/user?email=' + emailAddress;
+  const apiCall = ndexServer + path;
+  return callApi(apiCall, undefined);
+}
 
-  var emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const getUserByUserName = async (ndexServer, api, userName) => {
+  const path = '/' + api + '/user?username=' + userName;
+  const apiCall = ndexServer + path;
+  return callApi(apiCall, undefined);
+}
+
+export const emailNewPassword = async (ndexServer, api, userId) => {
+  var path = '/' + api + '/user/' + userId + '/password?forgot=true';
+  var apiCall = ndexServer + path;
+  
+  const putConfig = {
+    method: 'PUT',
+  }
+
+  return callApi(apiCall, putConfig);
+}
+
+export const getUserBySearch = async (ndexServer, api, emailAddress) => {
+
+  const emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  let response;
 
   if (emailRE.test(String(emailAddress).toLowerCase())) {
-    // Server API: Get User By Email
-    // GET /user?email={emailAddress}
-
-    var path = '/' + api + '/user?email=' + emailAddress;
-    var apiCall = ndexServer + path;
-    return callApi(apiCall);
+    try {
+      response = await getUserByEmail(ndexServer, api, emailAddress)
+    } catch (error) {
+      response = await getUserByUserName(ndexServer, api, emailAddress)
+    }
   } else {
-    throw('Not a valid e-mail')
+    response = await getUserByUserName(ndexServer, api, emailAddress)
   }
+  return response.parsedBody.externalId
 }
+
+export const resetPassword = async (ndexServer, api, searchString) => {
+  const user = await getUserBySearch(ndexServer,
+    api,
+    searchString)
+  const result = await emailNewPassword(ndexServer, api, user);
+  console.log('Result of resetPassword: ' + result);
+  return user
+}
+
+export const useResetPassword = (ndexServer) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [data, setData] = useState<string>();
+
+  const execute = async (user) => {
+    try {
+      setIsLoading(true);
+      setError(undefined);
+      setData(undefined);
+      const newData = await resetPassword(ndexServer, 'v2', user);
+      setData(newData)
+      return newData;
+    } catch (e) {
+      setError('Cannot find user.');
+      setIsLoading(false);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return {
+    isLoading,
+    error,
+    data,
+    execute: useCallback(execute, []), // to avoid infinite calls when inside a `useEffect`
+  };
+}
+
+
