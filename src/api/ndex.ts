@@ -15,6 +15,7 @@
 // }
 
 import HttpResponse from './HttpResponse'
+import NDExUserModel from '../model/NDExUserModel'
 
 import {
   useState,
@@ -36,6 +37,23 @@ export async function callApi<T>(request: RequestInfo, settings): Promise<HttpRe
   return response
 }
 
+export async function callTextApi(request: RequestInfo, settings): Promise<HttpResponse<string>> {
+  const response: HttpResponse<string> = await fetch(request, settings)
+
+  try {
+    response.parsedBody = await response.text()
+  } catch (ex) {
+    console.error('API Call error:', ex)
+  }
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  return response
+}
+
+
 export function signUp(ndexServer, api) {
   console.log("Sign Up!", ndexServer + api)
 }
@@ -53,8 +71,8 @@ export const getUserByUserName = async (ndexServer, api, userName) => {
 }
 
 export const emailNewPassword = async (ndexServer, api, userId) => {
-  var path = '/' + api + '/user/' + userId + '/password?forgot=true';
-  var apiCall = ndexServer + path;
+  const path = '/' + api + '/user/' + userId + '/password?forgot=true';
+  const apiCall = ndexServer + path;
   
   const putConfig = {
     method: 'PUT',
@@ -63,12 +81,17 @@ export const emailNewPassword = async (ndexServer, api, userId) => {
   return callApi(apiCall, putConfig);
 }
 
-export const getUserBySearch = async (ndexServer, api, emailAddress) => {
+const emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  const emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const isValidEmail = (inputString: string) => {
+  return emailRE.test(String(inputString).toLowerCase())
+}
+
+export const getUserBySearch = async (ndexServer:string, api:string, emailAddress:string) => {
+
   let response;
 
-  if (emailRE.test(String(emailAddress).toLowerCase())) {
+  if (isValidEmail(emailAddress)) {
     try {
       response = await getUserByEmail(ndexServer, api, emailAddress)
     } catch (error) {
@@ -119,21 +142,39 @@ export const useResetPassword = (ndexServer) => {
   };
 }
 
+export const createUser = async (ndexServer : string, api : string, user : NDExUserModel) => {
+ 
+    const path = '/' + api + '/user';
+    const apiCall = ndexServer + path;
+    
+    const postConfig = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    }
+  
+    return callTextApi(apiCall, postConfig);
+  
+}
+
 export const useCreateUser = (ndexServer) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [data, setData] = useState<string>();
 
-  const execute = async (user) => {
+  const execute = async (user : NDExUserModel) => {
     try {
       setIsLoading(true);
       setError(undefined);
       setData(undefined);
-      const newData = await resetPassword(ndexServer, 'v2', user);
-      setData(newData)
+      const newData : any = await createUser(ndexServer, 'v2', user);
+      console.log('create user response', newData.parsedBody)
+      setData(newData.parsedBody)
       return newData;
     } catch (e) {
-      setError('Cannot find user.');
+      setError('Cannot create user: ' + e);
       setIsLoading(false);
       throw e;
     } finally {
