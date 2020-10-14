@@ -11,7 +11,6 @@ import {
   Avatar
 } from '@material-ui/core'
 
-import config from './assets/config'
 import { useGoogleLogin, useGoogleLogout } from 'react-google-login';
 
 import NdexUserInfoPanel from './NdexUserInfoPanel'
@@ -76,7 +75,7 @@ const useStyles = makeStyles({
 const NdexLoginDialog = props => {
   const classes = useStyles()
 
-  const { ndexServerURL, loginInfo, setLoginInfo } = useContext(NDExAccountContext);
+  const { ndexServerURL, googleClientId, loginInfo, setLoginInfo } = useContext(NDExAccountContext);
 
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -190,8 +189,8 @@ const NdexLoginDialog = props => {
   // Unique ID for each NDEx server
   let googleSSO = true
   const serverUrl = props.ndexServer.split('//')[1]
-  const clientId = config.G_CLIENT_ID[serverUrl]
-  if (clientId === undefined || clientId === null) {
+ 
+  if (googleClientId === undefined || googleClientId === null) {
     googleSSO = false
   }
 
@@ -245,7 +244,7 @@ const NdexLoginDialog = props => {
   }
 
   const { signIn, loaded } = useGoogleLogin({
-    clientId: clientId,
+    clientId: googleClientId,
     scope: 'profile email',
     onSuccess: onGoogleSuccess,
     onFailure: onFailure,
@@ -255,7 +254,7 @@ const NdexLoginDialog = props => {
   })
 
   const { signOut } = useGoogleLogout({
-    clientId: clientId,
+    clientId: googleClientId,
     onLogoutSuccess: onGoogleLogoutSuccess,
     onFailure: onFailure
   })
