@@ -119,4 +119,34 @@ export const useResetPassword = (ndexServer) => {
   };
 }
 
+export const useCreateUser = (ndexServer) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [data, setData] = useState<string>();
+
+  const execute = async (user) => {
+    try {
+      setIsLoading(true);
+      setError(undefined);
+      setData(undefined);
+      const newData = await resetPassword(ndexServer, 'v2', user);
+      setData(newData)
+      return newData;
+    } catch (e) {
+      setError('Cannot find user.');
+      setIsLoading(false);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return {
+    isLoading,
+    error,
+    data,
+    execute: useCallback(execute, []), // to avoid infinite calls when inside a `useEffect`
+  };
+}
+
 
