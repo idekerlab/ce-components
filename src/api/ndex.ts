@@ -170,7 +170,7 @@ export const useCreateUser = (ndexServer) => {
       setError(undefined);
       setData(undefined);
       const newData : any = await createUser(ndexServer, 'v2', user);
-      console.log('create user response', newData.parsedBody)
+     
       setData(newData.parsedBody)
       return newData;
     } catch (e) {

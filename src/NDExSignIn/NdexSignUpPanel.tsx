@@ -3,6 +3,7 @@ import { Button, TextField, FormControlLabel, Checkbox, Typography } from '@mate
 import { makeStyles } from '@material-ui/styles'
 import { NDExAccountContext } from '../NDExAccountContext'
 import { isValidEmail, useCreateUser } from '../api/ndex'
+import { validateLogin } from './validateCredentials'
 import NDExUserModel from '../model/NDExUserModel'
 
 const useStyles = makeStyles({
@@ -29,8 +30,10 @@ const useStyles = makeStyles({
   }
 })
 
-const NdexSignUpPanel = () => {
+const NdexSignUpPanel = props => {
   const classes = useStyles()
+
+  const { handleCredentialsSignOn } = props
 
   const { ndexServerURL } = useContext(NDExAccountContext);
 
@@ -50,6 +53,31 @@ const NdexSignUpPanel = () => {
     //data,
     execute
   } = useCreateUser(ndexServerURL);
+
+  const loginAfterCreate = (username: string, password: string) => {
+    
+    setErrorMessage(undefined)
+
+    validateLogin(username, password, ndexServerURL).then(data => {
+      console.log('returned Validation:', data)
+
+      setTimeout(() => {
+
+        if (data.error !== null) {
+          setErrorMessage(data.error.message)
+        } else {
+          handleCredentialsSignOn({
+            username,
+            password,
+            ndexServerURL,
+            fullName: data.userData.firstName + ' ' + data.userData.lastName,
+            image: data.userData.image,
+            details: data.userData
+          })
+        }
+      }, 500)
+    })
+  }
 
   const validate = () => {
     setErrorMessage(undefined)
@@ -107,8 +135,7 @@ const NdexSignUpPanel = () => {
         emailAddress,
         password
       }
-      console.log('Create user: ', user)
-      execute(user)
+      execute(user).then(() => { loginAfterCreate(user.userName, user.password)});
     }
   }
 
