@@ -50,7 +50,7 @@ const NDExSignInButton = props => {
 
   const { classes } = props;
 
-  const {ndexServerURL, loginInfo, setLoginInfo} = useContext(NDExAccountContext);
+  const { ndexServerURL, loginInfo, setLoginInfo } = useContext(NDExAccountContext);
 
   const { onLoginStateUpdated, myAccountURL } = props
 

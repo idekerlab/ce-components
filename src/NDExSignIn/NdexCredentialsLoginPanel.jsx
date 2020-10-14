@@ -16,7 +16,8 @@ const useStyles = makeStyles({
     justifyContent: 'center'
   },
   loginButton: {
-    marginTop: '0.7em'
+    marginTop: '0.7em',
+    'background-color': '#337ab7'
   },
   bottom: {
     // marginTop: '2em'
@@ -37,7 +38,6 @@ const useStyles = makeStyles({
   blank: {
     marginTop: '0.5em',
     width: '100%',
-    height: '3em'
   }
 })
 
@@ -47,7 +47,7 @@ const FIELD_NAME = {
 }
 
 const NdexCredentialsLoginPanel = props => {
-  const { handleCredentialsSignOn, ndexServer } = props
+  const { handleCredentialsSignOn, ndexServer, setContentMode } = props
   const classes = useStyles()
 
   const [isLoading, setLoading] = useState(false)
@@ -132,8 +132,16 @@ const NdexCredentialsLoginPanel = props => {
         onClick={handleSubmit}
         disabled={disabled}
       >
-        Sign In
+        Sign In with NDEx
       </Button>
+
+      <Typography variant={'body1'}>
+        <a href="#" onClick={() => { setContentMode('FORGOT_PASSWORD') }}>Forgot your password?</a>
+        <br />
+        <br />
+          Need an account?{' '}
+        <a href="#" onClick={() => { setContentMode('SIGN_UP') }}>Click here to sign up!</a>
+      </Typography>
 
       {errorMessage ? (
         <div className={classes.errorPanel}>
@@ -147,16 +155,10 @@ const NdexCredentialsLoginPanel = props => {
           </Typography>
         </div>
       ) : (
-        <div className={classes.blank} />
-      )}
-
+          <div className={classes.blank} />
+        )}
       <div className={classes.bottom}>
         <Divider />
-
-        <Typography variant={'body1'}>
-          Need an account?{' '}
-          <a href="http://ndexbio.org">Click here to sign up!</a>
-        </Typography>
       </div>
     </div>
   )

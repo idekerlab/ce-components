@@ -23,9 +23,22 @@ import { NDExAccountContext } from '../NDExAccountContext'
 
 import { validateLogin } from './validateCredentials'
 
-const DEFAULT_TITLE = 'Sign in to your NDEx Account'
-const SUBTITLE = 'Choose one of the following sign in methods:'
+import NdexSignUpPanel from './NdexSignUpPanel'
+import ForgotPasswordPanel from './ForgotPasswordPanel'
+
 const LOGGED_IN_USER = 'loggedInUser'
+
+const content_mode = {
+  SIGN_IN: 'SIGN_IN',
+  FORGOT_PASSWORD: 'FORGOT_PASSWORD',
+  SIGN_UP: 'SIGN_UP'
+}
+
+const title_options = {
+  SIGN_IN: 'Sign in to your NDEx Account',
+  FORGOT_PASSWORD: 'Reset Password',
+  SIGN_UP: 'Sign Up for NDEx'
+}
 
 const useStyles = makeStyles({
   root: {
@@ -38,7 +51,8 @@ const useStyles = makeStyles({
   },
   title: {
     color: '#444444',
-    padding: '0.8em'
+    'padding-top': '0.8em',
+    'padding-bottom': '0em'
   },
   titleWrapper: {
     display: 'flex',
@@ -64,6 +78,8 @@ const NdexLoginDialog = props => {
   const { ndexServerURL, googleClientId, loginInfo, setLoginInfo } = useContext(NDExAccountContext);
 
   const [errorMessage, setErrorMessage] = useState('')
+
+  const [contentMode, setContentMode] = useState(content_mode.SIGN_IN)
 
   // Open/Close state is always passed from parent component
   const {
@@ -115,7 +131,7 @@ const NdexLoginDialog = props => {
 
   const onGoogleSuccess = res => {
     console.log('onGoogleSuccess called');
-   
+
     const newLoginInfo = { isGoogle: true, loginDetails: res }
     const userImage = res.profileObj.imageUrl
     refreshTokenSetup(res);
@@ -190,41 +206,41 @@ const NdexLoginDialog = props => {
   }
 
   const onAutoLoadFinished = (signedIn) => {
-    
+
     console.log('onAutoLoadFinished(' + signedIn + ')');
-  
-      const loggedInUserString = window.localStorage.getItem('loggedInUser');
 
-      if (loggedInUserString) {
-        console.log("LoggedInUser: " + loggedInUserString);
-        const loggedInUser = JSON.parse(loggedInUserString);
+    const loggedInUserString = window.localStorage.getItem('loggedInUser');
 
-        validateLogin(loggedInUser.userName, loggedInUser.token, ndexServer).then(data => {
-          console.log('auto login returned Validation:', data)
+    if (loggedInUserString) {
+      console.log("LoggedInUser: " + loggedInUserString);
+      const loggedInUser = JSON.parse(loggedInUserString);
 
-          if (data.error !== null) {
-            setErrorMessage(data.error.message)
-            setLoginInfo(null);
-            onLoginStateUpdated(null)
-          } else {
-            handleCredentialsSignOn({
-              id: loggedInUser.userName,
-              password: loggedInUser.token,
-              ndexServer,
-              fullName: data.userData.firstName + ' ' + data.userData.lastName,
-              image: data.userData.image,
-              details: data.userData
-            })
-          }
-        })
-      } else {
-        // Check current login status
-        if (!signedIn) {
+      validateLogin(loggedInUser.userName, loggedInUser.token, ndexServer).then(data => {
+        console.log('auto login returned Validation:', data)
+
+        if (data.error !== null) {
+          setErrorMessage(data.error.message)
           setLoginInfo(null);
           onLoginStateUpdated(null)
+        } else {
+          handleCredentialsSignOn({
+            id: loggedInUser.userName,
+            password: loggedInUser.token,
+            ndexServer,
+            fullName: data.userData.firstName + ' ' + data.userData.lastName,
+            image: data.userData.image,
+            details: data.userData
+          })
         }
-        //const GoogleAuth = window.gapi.auth2.getAuthInstance()
+      })
+    } else {
+      // Check current login status
+      if (!signedIn) {
+        setLoginInfo(null);
+        onLoginStateUpdated(null)
       }
+      //const GoogleAuth = window.gapi.auth2.getAuthInstance()
+    }
   }
 
   const { signIn, loaded } = useGoogleLogin({
@@ -232,7 +248,7 @@ const NdexLoginDialog = props => {
     scope: 'profile email',
     onSuccess: onGoogleSuccess,
     onFailure: onFailure,
-    onAutoLoadFinished : onAutoLoadFinished,
+    onAutoLoadFinished: onAutoLoadFinished,
     isSignedIn: true,
     fetchBasicProfile: true
   })
@@ -242,9 +258,6 @@ const NdexLoginDialog = props => {
     onLogoutSuccess: onGoogleLogoutSuccess,
     onFailure: onFailure
   })
-
-  
-
 
   const getContent = () => {
     if (loginInfo !== null) {
@@ -270,22 +283,33 @@ const NdexLoginDialog = props => {
       )
     }
 
-    return (
-      <NdexLoginPanel
-        setDialogState={setDialogState}
-        onLoginSuccess={onLoginSuccess}
-        onLogout={onLogout}
-        handleCredentialsSignOn={handleCredentialsSignOn}
-        onSuccess={onGoogleSuccess}
-        onError={onError}
-        handleError={handleError}
-        error={errorMessage}
-        ndexServer={ndexServer}
-        googleSignIn={signIn}
-        googleSSO={googleSSO}
-      />
-    )
+    switch (contentMode) {
+      case content_mode.SIGN_IN: return (
+        <NdexLoginPanel
+          setDialogState={setDialogState}
+          onLoginSuccess={onLoginSuccess}
+          onLogout={onLogout}
+          handleCredentialsSignOn={handleCredentialsSignOn}
+          onSuccess={onGoogleSuccess}
+          onError={onError}
+          handleError={handleError}
+          error={errorMessage}
+          ndexServer={ndexServer}
+          googleSignIn={signIn}
+          googleSSO={googleSSO}
+          setContentMode={setContentMode}
+        />
+      )
+      case content_mode.SIGN_UP: return (
+       <NdexSignUpPanel ndexServer={ndexServer}  handleCredentialsSignOn={handleCredentialsSignOn}/>
+      )
+      case content_mode.FORGOT_PASSWORD: return (
+        <ForgotPasswordPanel ndexServer={ndexServer}/>
+      )
+    }
   }
+
+  const title = title_options[contentMode];
 
   return (
     <Dialog className={classes.root} open={isOpen}>
@@ -300,8 +324,7 @@ const NdexLoginDialog = props => {
                 className={classes.ndexLogo}
               />
               <div>
-                <Typography variant={'subtitle1'}>{DEFAULT_TITLE}</Typography>
-                <Typography variant={'subtitle2'}>{SUBTITLE}</Typography>
+                <Typography variant={'subtitle1'}>{title}</Typography>
               </div>
             </div>
           </DialogTitle>
@@ -309,9 +332,19 @@ const NdexLoginDialog = props => {
       <DialogContent className={classes.content}>{getContent()}</DialogContent>
       <Divider />
       <DialogActions className={classes.actionPanel}>
+        {contentMode !== content_mode.SIGN_IN && <Button variant={'outlined'}
+          onClick={() => {
+            setContentMode(content_mode.SIGN_IN);
+          }}
+        >
+          Back
+        </Button>}
         <Button
-          variant={'outlined'}
-          onClick={() => setDialogState(false)}
+          variant={'contained'}
+          onClick={() => {
+            setDialogState(false);
+            setContentMode(content_mode.SIGN_IN);
+          }}
           color={'default'}
         >
           Close
