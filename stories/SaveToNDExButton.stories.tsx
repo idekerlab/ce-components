@@ -38,7 +38,7 @@ export const Default = () => {
     console.log("Update in login state: " + JSON.stringify(loginState));
   }
 
-  return <NDExAccountProvider ndexServerURL='http://public.ndexbio.org' >
+  return <NDExAccountProvider ndexServerURL='http://public.ndexbio.org' googleClientId='802839698598-mrrd3iq3jl06n6c2fo1pmmc8uugt9ukq.apps.googleusercontent.com'>
     <NDExSignInButton variant="outlined" size="small" onLoginStateUpdated={loginStateUpdated} /> &#8592; Login to a valid NDEx account to enable save<br/>
     <SaveToNDExButton variant="outlined" size="small" fetchCX={fetchCX} onSuccess={onSuccess} onFailure={onFailure} /> &#8592; Click to save a test network to your NDEx account<br/>
   </NDExAccountProvider >

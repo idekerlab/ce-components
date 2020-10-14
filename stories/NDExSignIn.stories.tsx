@@ -15,7 +15,7 @@ export const Default = () => {
     console.log("Update in login state: " + JSON.stringify(loginState));
   }
 
-  return <NDExAccountProvider ndexServerURL='http://public.ndexbio.org' >
+  return <NDExAccountProvider ndexServerURL='http://dev.ndexbio.org' googleClientId='802839698598-mrrd3iq3jl06n6c2fo1pmmc8uugt9ukq.apps.googleusercontent.com' >
     <NDExSignInButton variant="outlined" size="small" onLoginStateUpdated={loginStateUpdated} />
   </NDExAccountProvider>
 }

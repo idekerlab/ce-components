@@ -51,7 +51,7 @@ const App = () => {
   
   return (
     <CyNDExProvider port={1234}>
-      <NDExAccountProvider ndexServerURL='http://public.ndexbio.org' >
+      <NDExAccountProvider ndexServerURL='http://dev.ndexbio.org' googleClientId='802839698598-mrrd3iq3jl06n6c2fo1pmmc8uugt9ukq.apps.googleusercontent.com'>
       <NDExSignInButton variant="outlined" size="small" onLoginStateUpdated={loginStateUpdated} />
       <OpenInCytoscapeButton variant="outlined" size="small" fetchCX={fetchCX} onSuccess={onSuccess} onFailure={onFailure}/>
       <Typography variant="h6" gutterBottom>
