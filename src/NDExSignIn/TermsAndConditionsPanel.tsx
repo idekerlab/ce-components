@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Button, Typography, FormControlLabel, Checkbox } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { NDExAccountContext } from '../NDExAccountContext'
-
+import { useCreateGoogleUser } from '../api/ndex'
 
 const useStyles = makeStyles({
   signInHeader: {
@@ -15,7 +15,8 @@ const useStyles = makeStyles({
   item: {
     alignSelf: 'normal',
     marginRight: '1em',
-    marginLeft: '1em'
+    marginLeft: '1em',
+    marginTop: '1em'
   },
   lastItem: {
     alignSelf: 'flex-end'
@@ -31,6 +32,15 @@ const TermsAndConditionsPanel = (props) => {
 
   const { ndexServerURL } = useContext(NDExAccountContext);
 
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  const {
+    isLoading,
+    error,
+    //data,
+    execute
+  } = useCreateGoogleUser(ndexServerURL);
+
   console.log('terms and condition ndexServerUrl' + ndexServerURL)
 
   const [ readAgreement, setReadAgreement ] = useState(false);
@@ -42,7 +52,17 @@ const TermsAndConditionsPanel = (props) => {
 
  const agreeAction = (event) => {
   console.log('agreeAction', event)
-  onGoogleAgreement(oauth);
+  setErrorMessage(undefined)
+  console.log("tokenId=", oauth.tokenId);
+  execute(oauth.tokenId, oauth.profileObj.email).then( () => {
+    onGoogleAgreement(oauth);
+    }
+  ).catch( (error) =>  {
+    console.log(error);
+    setErrorMessage('Cannot create user account.');
+  })
+  
+ 
  }
 
   return (
@@ -68,8 +88,9 @@ const TermsAndConditionsPanel = (props) => {
           <a href="https://home.ndexbio.org/disclaimer-license/" target="_blank">Terms &amp; Conditions</a>
         </Typography>)}
       />
+       { errorMessage || error && <Typography>{errorMessage ? errorMessage : error}</Typography>}
        <Button onClick={agreeAction} 
-        disabled={ !readAgreement }
+        disabled={ !readAgreement || isLoading}
         className={classes.lastItem}
       >Sign Up</Button>
     </div>
