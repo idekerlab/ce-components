@@ -190,14 +190,25 @@ export const useCreateUser = (ndexServer) => {
   };
 }
 
-export const getUniqueUserName = (email: string)=> {
+const USERNAME_LENGTH_LIMIT = 95;
+
+export const getUniqueUserName = async (ndexServer, api, email: string)=> {
   let userName = email.replace(/@.*$/, '');
 
-  if (userName.length > 24) {
+  if (userName.length > USERNAME_LENGTH_LIMIT) {
       // get first $scope.limitOfUserNameLength of user name
-      userName = userName.substring(0, 24);
+      userName = userName.substring(0, USERNAME_LENGTH_LIMIT);
   }
- 
+  try {
+    let counter = 1;
+    while(await getUserByUserName(ndexServer, api, userName))
+    {
+      userName = userName + counter
+      counter++
+    }
+  } catch (error) {
+
+  }
   return userName
 }
 
@@ -206,7 +217,7 @@ export const createGoogleUser = async (ndexServer : string, api : string, tokenI
   const path = '/' + api + '/user?idtoken=' + tokenId;
   const apiCall = ndexServer + path;
   
-  const userName = getUniqueUserName(email)
+  const userName = await getUniqueUserName(ndexServer, api, email)
 
   const postConfig = {
     method: 'POST',

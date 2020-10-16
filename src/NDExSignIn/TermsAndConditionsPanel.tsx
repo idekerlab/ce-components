@@ -53,7 +53,8 @@ const TermsAndConditionsPanel = (props) => {
  const agreeAction = (event) => {
   console.log('agreeAction', event)
   setErrorMessage(undefined)
-  console.log("tokenId=", oauth.tokenId);
+  console.log("agreeaction tokenId=", oauth.tokenId);
+  console.log("agreeaction email=", oauth.profileObj.email)
   execute(oauth.tokenId, oauth.profileObj.email).then( () => {
     onGoogleAgreement(oauth);
     }
