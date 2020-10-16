@@ -173,7 +173,7 @@ const NdexSignUpPanel = props => {
             checked={readAgreement}
             onChange={handleChange}
             name="readAgreement"
-            color="primary"
+            color="secondary"
           />
         }
         label={(<Typography variant={'body1'}>

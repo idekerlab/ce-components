@@ -11,7 +11,7 @@ const useStyles = makeStyles({
     padding: '1.2em',
     alignItems: 'center',
     justifyContent: 'center'
-  },
+  }, 
   item: {
     alignSelf: 'normal',
     marginRight: '1em',
@@ -81,7 +81,7 @@ const TermsAndConditionsPanel = (props) => {
             checked={readAgreement}
             onChange={handleChange}
             name="readAgreement"
-            color="primary"
+            color="secondary"
           />
         }
         label={(<Typography variant={'body1'}>
