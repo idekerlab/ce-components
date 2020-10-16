@@ -190,4 +190,75 @@ export const useCreateUser = (ndexServer) => {
   };
 }
 
+const USERNAME_LENGTH_LIMIT = 95;
+
+export const getUniqueUserName = async (ndexServer, api, email: string)=> {
+  let userName = email.replace(/@.*$/, '');
+
+  if (userName.length > USERNAME_LENGTH_LIMIT) {
+      // get first $scope.limitOfUserNameLength of user name
+      userName = userName.substring(0, USERNAME_LENGTH_LIMIT);
+  }
+  try {
+    let counter = 1;
+    while(await getUserByUserName(ndexServer, api, userName))
+    {
+      userName = userName + counter
+      counter++
+    }
+  } catch (error) {
+
+  }
+  return userName
+}
+
+export const createGoogleUser = async (ndexServer : string, api : string, tokenId : string, email : string) => {
+ 
+  const path = '/' + api + '/user?idtoken=' + tokenId;
+  const apiCall = ndexServer + path;
+  
+  const userName = await getUniqueUserName(ndexServer, api, email)
+
+  const postConfig = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({'userName': userName})
+  }
+
+  return callTextApi(apiCall, postConfig);
+
+}
+
+export const useCreateGoogleUser = (ndexServer) => {
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState<string>();
+const [data, setData] = useState<string>();
+
+const execute = async (tokenId, email) => {
+  try {
+    setIsLoading(true);
+    setError(undefined);
+    setData(undefined);
+    const newData : any = await createGoogleUser(ndexServer, 'v2', tokenId, email);
+   
+    setData(newData.parsedBody)
+    return newData;
+  } catch (e) {
+    setError('Cannot create user: ' + e);
+    setIsLoading(false);
+    throw e;
+  } finally {
+    setIsLoading(false);
+  }
+}
+
+return {
+  isLoading,
+  error,
+  data,
+  execute: useCallback(execute, []), // to avoid infinite calls when inside a `useEffect`
+};
+}
 

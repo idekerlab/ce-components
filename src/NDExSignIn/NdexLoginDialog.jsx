@@ -26,17 +26,23 @@ import { validateLogin } from './validateCredentials'
 import NdexSignUpPanel from './NdexSignUpPanel'
 import ForgotPasswordPanel from './ForgotPasswordPanel'
 
+import TermsAndConditionsPanel from './TermsAndConditionsPanel'
+
+import { getUserByEmail } from '../api/ndex'
+
 const LOGGED_IN_USER = 'loggedInUser'
 
 const content_mode = {
   SIGN_IN: 'SIGN_IN',
   FORGOT_PASSWORD: 'FORGOT_PASSWORD',
+  SIGN_TERMS_AND_CONDITIONS: 'SIGN_TERMS_AND_CONDITIONS',
   SIGN_UP: 'SIGN_UP'
 }
 
 const title_options = {
   SIGN_IN: 'Sign in to your NDEx Account',
   FORGOT_PASSWORD: 'Reset Password',
+  SIGN_TERMS_AND_CONDITIONS: 'Create New Account',
   SIGN_UP: 'Sign Up for NDEx'
 }
 
@@ -81,6 +87,7 @@ const NdexLoginDialog = props => {
 
   const [contentMode, setContentMode] = useState(content_mode.SIGN_IN)
 
+  const [tempGoogleAuth, setTempGoogleAuth] = useState();
   // Open/Close state is always passed from parent component
   const {
     isOpen,
@@ -132,6 +139,25 @@ const NdexLoginDialog = props => {
   const onGoogleSuccess = res => {
     console.log('onGoogleSuccess called');
 
+   
+    
+    
+    const newNdexCredential = 
+    { loaded: true,
+      isLogin: true,
+      isGoogle: true, 
+      oauth: res 
+    }
+
+    getUserByEmail(ndexServerURL, 'v2', newNdexCredential.oauth.profileObj.email).then(()=>{
+      onGoogleAgreement(res);
+    }).catch((error) => {
+      setTempGoogleAuth(res);
+      setContentMode(content_mode.SIGN_TERMS_AND_CONDITIONS);
+    })
+  }
+
+  const onGoogleAgreement = (res) => {
     const newLoginInfo = { isGoogle: true, loginDetails: res }
     const userImage = res.profileObj.imageUrl
     refreshTokenSetup(res);
@@ -305,6 +331,9 @@ const NdexLoginDialog = props => {
       )
       case content_mode.FORGOT_PASSWORD: return (
         <ForgotPasswordPanel ndexServer={ndexServer}/>
+      )
+      case content_mode.SIGN_TERMS_AND_CONDITIONS: return (
+        <TermsAndConditionsPanel ndexServer={ndexServer} oauth={tempGoogleAuth} onGoogleAgreement={onGoogleAgreement}/>
       )
     }
   }
