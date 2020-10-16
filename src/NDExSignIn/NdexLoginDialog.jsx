@@ -139,9 +139,6 @@ const NdexLoginDialog = props => {
   const onGoogleSuccess = res => {
     console.log('onGoogleSuccess called');
 
-   
-    
-    
     const newNdexCredential = 
     { loaded: true,
       isLogin: true,
@@ -152,8 +149,13 @@ const NdexLoginDialog = props => {
     getUserByEmail(ndexServerURL, 'v2', newNdexCredential.oauth.profileObj.email).then(()=>{
       onGoogleAgreement(res);
     }).catch((error) => {
-      setTempGoogleAuth(res);
-      setContentMode(content_mode.SIGN_TERMS_AND_CONDITIONS);
+      if (isOpen) {
+        setTempGoogleAuth(res);
+        setContentMode(content_mode.SIGN_TERMS_AND_CONDITIONS);
+      } else {
+        setLoginInfo(null);
+        onLoginStateUpdated(null)
+      }
     })
   }
 
