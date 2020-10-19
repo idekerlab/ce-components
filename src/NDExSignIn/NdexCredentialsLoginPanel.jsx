@@ -101,7 +101,9 @@ const NdexCredentialsLoginPanel = props => {
   }
 
   return (
+    <form onSubmit={ handleSubmit}>
     <div className={classes.root}>
+      
       <FormControl className={classes.formControl}>
         <TextField
           name="id"
@@ -127,6 +129,7 @@ const NdexCredentialsLoginPanel = props => {
 
       <Button
         className={classes.loginButton}
+        type="submit"
         variant="contained"
         color={'secondary'}
         onClick={handleSubmit}
@@ -142,7 +145,7 @@ const NdexCredentialsLoginPanel = props => {
           Need an account?{' '}
         <a href="#" onClick={() => { setContentMode('SIGN_UP') }}>Click here to sign up!</a>
       </Typography>
-
+   
       {errorMessage ? (
         <div className={classes.errorPanel}>
           <ErrorOutline color={'error'} />
@@ -161,6 +164,7 @@ const NdexCredentialsLoginPanel = props => {
         <Divider />
       </div>
     </div>
+     </form>
   )
 }
 

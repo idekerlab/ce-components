@@ -140,6 +140,7 @@ const NdexSignUpPanel = props => {
   }
 
   return (
+    <form onSubmit={ signUpAction }>
     <div className={classes.signUpHeader}>
       <div className={classes.item}>
         <TextField name="firstName" label='First Name' value={firstName} onChange={handleChange} className={classes.leftItem} />
@@ -182,10 +183,14 @@ const NdexSignUpPanel = props => {
         </Typography>)}
       />
       { errorMessage || error && <Typography>{errorMessage ? errorMessage : error}</Typography>}
-      <Button onClick={signUpAction} className={classes.lastItem}
-       disabled = { isLoading }
+      <Button 
+        onClick={signUpAction} 
+        className={classes.lastItem}
+        disabled = { isLoading }
+        type="submit"
       >Sign Up</Button>
     </div>
+    </form>
   )
 }
 
