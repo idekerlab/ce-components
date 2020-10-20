@@ -88,12 +88,22 @@ const NDExSignInButton = props => {
     }
   }
 
+  const getNDExUsername = () => {
+    return loginInfo.loginDetails.fullName;
+  }
+
+  const getGoogleUsername = () => {
+    return loginInfo.loginDetails.profileObj.name;
+  }
+
   const getNDExAvatar = ()=> {
-  return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.image }>{ loginInfo.loginDetails.image ? "" : loginInfo.loginDetails.fullname ? loginInfo.loginDetails.fullname.trim().substring(0,1) : "A"}</Avatar> 
+    const userName = getNDExUsername();
+    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.image }>{ loginInfo.loginDetails.image ? "" : userName ? userName.trim().substring(0,1) : "A"}</Avatar> 
   }
 
   const getGoogleAvatar = () => {
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.profileObj.imageUrl }>{ loginInfo.loginDetails.profileObj.imageUrl ? "" : loginInfo.loginDetails.profileObj.name ? loginInfo.loginDetails.profileObj.name.trim().substring(0,1) : "A"}</Avatar> 
+    const userName = getGoogleUsername();
+    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.profileObj.imageUrl }>{ loginInfo.loginDetails.profileObj.imageUrl ? "" : userName ? userName.trim().substring(0,1) : "A"}</Avatar> 
   }
 
   const getIcon = () => {
@@ -102,11 +112,15 @@ const NDExSignInButton = props => {
     : <AccountCircleIcon className={iconClassName(size)}/>
   }
 
+  const getTitle = () => {
+    return loginInfo ? 'Signed in as ' + (loginInfo.isGoogle ? getGoogleUsername() : getNDExUsername()): 'Sign in to NDEx'
+  }
+
   return (
     <React.Fragment>
       <Tooltip
         disableFocusListener
-        title="Sign In to NDEx"
+        title={getTitle()}
         placement="bottom"
       >
         <Button
