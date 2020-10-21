@@ -20,7 +20,8 @@ const styles = theme => ({
     'line-height': 0
   },
   iconSmall: {
-    height: '22px'
+    height: '22px',
+    'margin-left': '2px'
   },
   iconMedium: {
     height: '24px'
@@ -114,6 +115,7 @@ const OpenInCytoscapeButton = props => {
           onClick={importNetwork}
           size={size}
         >
+          Open In Cytoscape
           <Icon className={iconClassName(size)} >
             <img className={classes.buttonIcon} src={!cyRESTAvailable ? logoDisabled : logo} />
           </Icon>
