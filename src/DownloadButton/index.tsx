@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
-import IconButton from '@material-ui/core/IconButton'
-import { Tooltip } from '@material-ui/core'
+import { Button, Tooltip } from '@material-ui/core'
 import DownloadIcon from '@material-ui/icons/CloudDownload'
 
 export interface DownloadProps {
@@ -31,19 +30,13 @@ export const DownloadButton: FC<DownloadProps> = ({
     a.click()
   }
 
-  if (disabled) {
-    return (
-      <IconButton disabled={disabled} onClick={handleClick}>
-        <DownloadIcon />
-      </IconButton>
-    )
-  }
-
   return (
-    <Tooltip title={tooltip} placement={'top'}>
-      <IconButton disabled={disabled} onClick={handleClick}>
-        <DownloadIcon />
-      </IconButton>
+    <Tooltip title={tooltip}>
+      <span>
+        <Button disabled={disabled} onClick={handleClick}>
+          <DownloadIcon />
+        </Button>
+      </span>
     </Tooltip>
   )
 }
