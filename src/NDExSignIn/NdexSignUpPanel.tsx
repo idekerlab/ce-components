@@ -27,6 +27,9 @@ const useStyles = makeStyles({
   },
   lastItem: {
     alignSelf: 'flex-end'
+  },
+  textItem: {
+    paddingBottom : '1em'
   }
 })
 
@@ -47,6 +50,8 @@ const NdexSignUpPanel = props => {
 
   const [errorMessage, setErrorMessage] = useState<string>();
 
+  const [showEmailValidation, setShowEmailValidation] = useState(false)
+
   const {
     isLoading,
     error,
@@ -55,7 +60,7 @@ const NdexSignUpPanel = props => {
   } = useCreateUser(ndexServerURL);
 
   const loginAfterCreate = (username: string, password: string) => {
-    
+
     setErrorMessage(undefined)
 
     validateLogin(username, password, ndexServerURL).then(data => {
@@ -128,69 +133,93 @@ const NdexSignUpPanel = props => {
 
   const signUpAction = () => {
     if (validate()) {
-      const user : NDExUserModel = {
+      const user: NDExUserModel = {
         userName,
         firstName,
         lastName,
         emailAddress,
         password
       }
-      execute(user).then(() => { loginAfterCreate(user.userName, user.password)});
+      execute(user).then((response) => {
+        if (response.parsedBody && response.parsedBody.length > 0) {
+          loginAfterCreate(user.userName, user.password)
+        } else {
+          setShowEmailValidation(true)
+        }
+
+      });
     }
   }
 
-  return (
-    <form onSubmit={ signUpAction }>
-    <div className={classes.signUpHeader}>
-      <div className={classes.item}>
-        <TextField name="firstName" label='First Name' value={firstName} onChange={handleChange} className={classes.leftItem} />
-        <TextField name="lastName" label='Last Name' value={lastName} onChange={handleChange} className={classes.rightItem} />
-      </div>
-      <TextField name="userName" label='Username' value={userName} onChange={handleChange} className={classes.item} />
-      <TextField name="emailAddress" label='E-Mail Address' value={emailAddress} onChange={handleChange} className={classes.item} />
-      <TextField
-        name="password"
-        label="Password"
-        type="password"
-        value={password}
-        onChange={handleChange}
-        autoComplete="current-password"
-        className={classes.item}
-      />
-      <TextField
-        name="confirmPassword"
-        label="Confirm Password"
-        type="password"
-        value={confirmPassword}
-        onChange={handleChange}
-        autoComplete="current-password"
-        className={classes.item}
-      />
 
-      <FormControlLabel
-        className={classes.item}
-        control={
-          <Checkbox
-            checked={readAgreement}
+
+  return (
+    showEmailValidation ?
+      <div className={classes.signUpHeader}>
+        <div className={classes.item}>
+          <Typography variant={'h6'} className={classes.textItem}>
+            Check Your Email
+          </Typography>
+          <Typography variant={'subtitle2'} className={classes.textItem}>
+            ALMOST DONE!
+          </Typography>
+          <Typography variant={'body1'} className={classes.textItem}>
+            We sent a verification link to the e-mail address you provided. Please check your email and follow the instructions to complete your registration. You must complete your registration within 24 hours. Can't find the email? Make sure to check your SPAM folder and add "support@ndexbio.org" to your safe-senders list.
+        </Typography>
+        </div>
+      </div>
+      :
+      <form onSubmit={signUpAction}>
+        <div className={classes.signUpHeader}>
+          <div className={classes.item}>
+            <TextField name="firstName" label='First Name' value={firstName} onChange={handleChange} className={classes.leftItem} />
+            <TextField name="lastName" label='Last Name' value={lastName} onChange={handleChange} className={classes.rightItem} />
+          </div>
+          <TextField name="userName" label='Username' value={userName} onChange={handleChange} className={classes.item} />
+          <TextField name="emailAddress" label='E-Mail Address' value={emailAddress} onChange={handleChange} className={classes.item} />
+          <TextField
+            name="password"
+            label="Password"
+            type="password"
+            value={password}
             onChange={handleChange}
-            name="readAgreement"
-            color="secondary"
+            autoComplete="current-password"
+            className={classes.item}
           />
-        }
-        label={(<Typography variant={'body1'}>
-          I have read and accept the{' '}
-          <a href="https://home.ndexbio.org/disclaimer-license/" target="_blank">Terms &amp; Conditions</a>
-        </Typography>)}
-      />
-      { errorMessage || error && <Typography>{errorMessage ? errorMessage : error}</Typography>}
-      <Button 
-        onClick={signUpAction} 
-        className={classes.lastItem}
-        disabled = { isLoading }
-        type="submit"
-      >Sign Up</Button>
-    </div>
-    </form>
+          <TextField
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={handleChange}
+            autoComplete="current-password"
+            className={classes.item}
+          />
+
+          <FormControlLabel
+            className={classes.item}
+            control={
+              <Checkbox
+                checked={readAgreement}
+                onChange={handleChange}
+                name="readAgreement"
+                color="secondary"
+              />
+            }
+            label={(<Typography variant={'body1'}>
+              I have read and accept the{' '}
+              <a href="https://home.ndexbio.org/disclaimer-license/" target="_blank">Terms &amp; Conditions</a>
+            </Typography>)}
+          />
+          {errorMessage || error && <Typography>{errorMessage ? errorMessage : error}</Typography>}
+          <Button
+            onClick={signUpAction}
+            className={classes.lastItem}
+            disabled={isLoading}
+            type="submit"
+          >Sign Up</Button>
+        </div>
+      </form>
   )
 }
 

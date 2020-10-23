@@ -329,7 +329,7 @@ const NdexLoginDialog = props => {
         />
       )
       case content_mode.SIGN_UP: return (
-       <NdexSignUpPanel ndexServer={ndexServer}  handleCredentialsSignOn={handleCredentialsSignOn}/>
+        <NdexSignUpPanel ndexServer={ndexServer}  handleCredentialsSignOn={handleCredentialsSignOn} />
       )
       case content_mode.FORGOT_PASSWORD: return (
         <ForgotPasswordPanel ndexServer={ndexServer}/>
