@@ -59,11 +59,11 @@ const NdexSignUpPanel = props => {
     execute
   } = useCreateUser(ndexServerURL);
 
-  const loginAfterCreate = (username: string, password: string) => {
+  const loginAfterCreate = (userName: string, password: string) => {
 
     setErrorMessage(undefined)
 
-    validateLogin(username, password, ndexServerURL).then(data => {
+    validateLogin(userName, password, ndexServerURL).then(data => {
       console.log('returned Validation:', data)
 
       setTimeout(() => {
@@ -72,9 +72,9 @@ const NdexSignUpPanel = props => {
           setErrorMessage(data.error.message)
         } else {
           handleCredentialsSignOn({
-            username,
+            id: data.userData.userName,
             password,
-            ndexServerURL,
+            ndexServer: ndexServerURL,
             fullName: data.userData.firstName + ' ' + data.userData.lastName,
             image: data.userData.image,
             details: data.userData
