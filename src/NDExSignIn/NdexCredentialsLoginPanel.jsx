@@ -19,9 +19,6 @@ const useStyles = makeStyles({
     marginTop: '0.7em',
     'background-color': '#337ab7'
   },
-  bottom: {
-    // marginTop: '2em'
-  },
   formControl: {
     flexGrow: 2
   },
@@ -160,9 +157,7 @@ const NdexCredentialsLoginPanel = props => {
       ) : (
           <div className={classes.blank} />
         )}
-      <div className={classes.bottom}>
-        <Divider />
-      </div>
+ 
     </div>
      </form>
   )

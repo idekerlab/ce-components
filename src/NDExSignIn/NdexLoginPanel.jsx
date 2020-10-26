@@ -10,7 +10,7 @@ import NdexCredentialsLoginPanel from './NdexCredentialsLoginPanel'
 
 const useStyles = makeStyles({
   root: {
-    height: '16em',
+    height: '19em',
     margin: 0,
     padding: '0.6em',
     display: 'flex',
@@ -23,6 +23,7 @@ const useStyles = makeStyles({
     justifyContent: 'center'
   },
   rightComponent: {
+    height: '100%',
     marginLeft: '0.6em',
     flexGrow: 2
   }
