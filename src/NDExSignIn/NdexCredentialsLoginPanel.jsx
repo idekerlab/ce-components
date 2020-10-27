@@ -54,7 +54,9 @@ const NdexCredentialsLoginPanel = props => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   const handleSubmit = event => {
+    event.preventDefault();
     console.log('Submit:', id, password)
+   
     setLoading(true)
     setErrorMessage(null)
 
@@ -129,7 +131,6 @@ const NdexCredentialsLoginPanel = props => {
         type="submit"
         variant="contained"
         color={'secondary'}
-        onClick={handleSubmit}
         disabled={disabled}
       >
         Sign In with NDEx

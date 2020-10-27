@@ -117,6 +117,7 @@ const NdexLoginDialog = props => {
     }
     setLoginInfo(null);
     onLoginStateUpdated(null)
+    setDialogState(false);
   }
 
   const handleCredentialsSignOn = userInfo => {
@@ -201,7 +202,8 @@ const NdexLoginDialog = props => {
 
   const onSuccessLogin = (loginInfo, userImage) => {
     setLoginInfo(loginInfo);
-    onLoginStateUpdated(loginInfo)
+    onLoginStateUpdated(loginInfo);
+    setDialogState(false);
   }
 
   const handleError = error => {
