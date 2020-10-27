@@ -84,8 +84,7 @@ const NdexSignUpPanel = props => {
     })
   }
 
-  const validate = () => {
-    setErrorMessage(undefined)
+  const validate = () : string | null => {
 
     if (firstName.length < 1
       || lastName.length < 1
@@ -93,30 +92,25 @@ const NdexSignUpPanel = props => {
       || emailAddress.length < 1
       || password.length < 1
       || confirmPassword.length < 1) {
-      setErrorMessage('Please fill out all fields.')
-      return false
+      return  'Please fill out all fields.'
     }
 
     if (!isValidEmail(emailAddress)) {
-      setErrorMessage('Please enter a valid email.')
-      return false
+      return 'Please enter a valid email.'
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Passwords do not match');
-      return false
+      return 'Passwords do not match'
     }
 
     if (password.length < 8) {
-      setErrorMessage('Password must be a minimum of 8 characters')
-      return false
+      return 'Password must be a minimum of 8 characters'
     }
 
     if (!readAgreement) {
-      setErrorMessage('Please read and sign the Terms & Conditions');
-      return false
+      return 'Please read and sign the Terms & Conditions'
     }
-    return true
+    return null
   }
 
   const handleChange = (event) => {
@@ -131,8 +125,10 @@ const NdexSignUpPanel = props => {
     }
   }
 
-  const signUpAction = () => {
-    if (validate()) {
+  const signUpAction = (event) => {
+    event.preventDefault();
+    const formError = validate();
+    if (formError === null) {
       const user: NDExUserModel = {
         userName,
         firstName,
@@ -146,8 +142,9 @@ const NdexSignUpPanel = props => {
         } else {
           setShowEmailValidation(true)
         }
-
       });
+    } else {
+      setErrorMessage(formError);
     }
   }
 
@@ -213,7 +210,7 @@ const NdexSignUpPanel = props => {
           />
           {errorMessage || error && <Typography>{errorMessage ? errorMessage : error}</Typography>}
           <Button
-            onClick={signUpAction}
+            //onClick={signUpAction}
             className={classes.lastItem}
             disabled={isLoading}
             type="submit"
