@@ -10,6 +10,10 @@ const useStyles = makeStyles({
     flexShrink: 0
   },
   accountPopoverPaper: {
+    padding: '1em',
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column'
     //width: '240px'
   },
   ndexAvatar: {},
@@ -22,11 +26,9 @@ const useStyles = makeStyles({
     padding: '1em'
   },
   ndexProfileAvatar: {
-    display: 'inline-block',
     'vertical-align': 'middle'
   },
   ndexProfileText: {
-    display: 'inline-block',
     'padding-left': '1em',
     'padding-right': '1em',
     'vertical-align': 'middle'
@@ -37,7 +39,7 @@ const useStyles = makeStyles({
   signInHeader: {
     display: 'flex',
     padding: '1.2em',
-    alignItems: 'center',
+   
     justifyContent: 'center'
   },
   ndexAccountGreeting: {
@@ -49,11 +51,7 @@ const useStyles = makeStyles({
     height: '6em'
   },
   item: {
-    marginRight: '1em'
-  },
-  rightItem: {
-    marginLeft: '1em',
-    marginRight: '1em'
+    marginTop: '1em'
   }
 })
 
@@ -91,19 +89,19 @@ const NdexUserInfoPopover = props => {
   >
       <Avatar className={classes.largeAvatar} src={userImage}>
         U
-      </Avatar><div className={ classes.ndexAccountGreeting }>
+      </Avatar>
       <Typography variant={'subtitle1'} className={classes.item}>
         You are logged in as {userName}
       </Typography>
       { myAccountURL && 
       <Button
         variant={'outlined'} 
+        className={classes.item}
         href={ myAccountURL }
         rel="noopener">Go to My Account</Button> }
-      </div>
       <Button
         variant={'outlined'}
-        className={classes.rightItem}
+        className={classes.item}
         color={'secondary'}
         onClick={onLogout}
       >
