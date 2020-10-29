@@ -8,6 +8,7 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
+    "clsx": "^1.1.1",
     "react-app-polyfill": "^1.0.0"
   },
   "alias": {
