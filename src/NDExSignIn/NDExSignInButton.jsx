@@ -6,6 +6,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import NdexLoginDialog from './NdexLoginDialog'
 import { NDExAccountContext } from '../NDExAccountContext'
 import Avatar from '@material-ui/core/Avatar';
+import NdexUserInfoPanel from './NdexUserInfoPanel';
+import NdexUserInfoPopover from './NdexUserInfoPopover';
 
 const styles = theme => ({
   button: {
@@ -59,11 +61,20 @@ const NDExSignInButton = props => {
     onUpdate = onLoginStateUpdated
   }
 
-  const [isOpen, setOpen] = useState(false)
+  const [isDialogOpen, setDialogOpen] = useState(false)
 
   const setDialogState = dialogState => {
-    setOpen(dialogState)
+    setDialogOpen(dialogState)
   }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const isPopoverOpen = Boolean(anchorEl);
+
   const defaultSignInAction = () => {
     console.log("")
   };
@@ -116,6 +127,20 @@ const NDExSignInButton = props => {
     return loginInfo ? 'Signed in as ' + (loginInfo.isGoogle ? getGoogleUsername() : getNDExUsername()): 'Sign in to NDEx'
   }
 
+  let userName = ''
+  let userImage = null
+  if (loginInfo !== null) {
+
+   
+    if (loginInfo.isGoogle) {
+      userName = loginInfo.loginDetails.profileObj.name
+      userImage = loginInfo.loginDetails.profileObj.imageUrl
+    } else {
+      userName = loginInfo.loginDetails.fullName
+      userImage = loginInfo.loginDetails.image
+    }
+  }
+
   return (
     <React.Fragment>
       <Tooltip
@@ -126,7 +151,14 @@ const NDExSignInButton = props => {
         <Button
           className={classes.button}
           variant={variant}
-          onClick={() => setDialogState(true)}
+          onClick={(event) => {
+              if (loginInfo) {
+                setAnchorEl(event.currentTarget);
+              } else {
+                setDialogState(true)
+              }
+            }
+          }
           size={size}
         >
           { getIcon()
@@ -135,10 +167,20 @@ const NDExSignInButton = props => {
       </Tooltip>
       <NdexLoginDialog
         setDialogState={setDialogState}
-        isOpen={isOpen}
+        isOpen={isDialogOpen}
         ndexServer={ndexServerURL}
         onLoginStateUpdated={onUpdate}
         myAccountURL = {myAccountURL}
+ 
+      />
+      <NdexUserInfoPopover
+        userName={userName}
+        userImage={userImage}
+        isOpen={isPopoverOpen}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        myAccountURL = {myAccountURL}
+        ndexServer={ndexServerURL}
       />
     </React.Fragment>
   )
