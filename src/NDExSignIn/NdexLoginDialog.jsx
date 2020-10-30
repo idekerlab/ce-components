@@ -11,8 +11,6 @@ import {
   Avatar
 } from '@material-ui/core'
 
-
-import NdexUserInfoPanel from './NdexUserInfoPanel'
 import NdexLoginPanel from './NdexLoginPanel'
 import { makeStyles } from '@material-ui/styles'
 

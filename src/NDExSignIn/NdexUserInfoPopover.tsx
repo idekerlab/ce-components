@@ -67,6 +67,11 @@ const NdexUserInfoPopover = props => {
     myAccountURL
    } = props
 
+   const handleLogout = () => {
+    onClose(); 
+    onLogout();
+   }
+
   return (
     <Popover
     id="account-popper"
@@ -103,7 +108,7 @@ const NdexUserInfoPopover = props => {
         variant={'outlined'}
         className={classes.item}
         color={'secondary'}
-        onClick={onLogout}
+        onClick={handleLogout}
       >
         Sign Out
       </Button>

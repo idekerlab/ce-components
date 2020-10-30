@@ -6,7 +6,6 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import NdexLoginDialog from './NdexLoginDialog'
 import { NDExAccountContext } from '../NDExAccountContext'
 import Avatar from '@material-ui/core/Avatar';
-import NdexUserInfoPanel from './NdexUserInfoPanel';
 import NdexUserInfoPopover from './NdexUserInfoPopover';
 
 import { useGoogleLogin, useGoogleLogout } from 'react-google-login';
