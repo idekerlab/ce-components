@@ -57,7 +57,12 @@ const NDExSignInButton = props => {
 
   const { classes } = props;
 
-  const { ndexServerURL, loginInfo, setLoginInfo, googleClientId } = useContext(NDExAccountContext);
+  const { ndexServerURL, 
+    loginInfo, 
+    setLoginInfo, 
+    googleClientId,
+    getUserProfile
+   } = useContext(NDExAccountContext);
 
   const { onLoginStateUpdated, myAccountURL } = props
 
@@ -155,7 +160,8 @@ const NDExSignInButton = props => {
         setContentMode(content_mode.SIGN_TERMS_AND_CONDITIONS);
       } else {
         setLoginInfo(null);
-        onLoginStateUpdated(null)
+        getUserProfile(null);
+        onLoginStateUpdated(null);
       }
     })
   }
@@ -202,6 +208,12 @@ const NDExSignInButton = props => {
 
   const onSuccessLogin = (loginInfo, userImage) => {
     setLoginInfo(loginInfo);
+    console.log('onSuccess loginInfo: ', loginInfo);
+    if (loginInfo.isGoogle) {
+      getUserProfile(loginInfo.loginDetails.profileObj.email);
+    } else {
+      getUserProfile(loginInfo.loginDetails.details.emailAddress);
+    }
     onLoginStateUpdated(loginInfo);
     setDialogState(false);
   }
