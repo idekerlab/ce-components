@@ -61,6 +61,8 @@ const NDExSignInButton = props => {
     loginInfo, 
     setLoginInfo, 
     googleClientId,
+    userProfile,
+    isUserProfileLoading,
     getUserProfile
    } = useContext(NDExAccountContext);
 
@@ -127,8 +129,7 @@ const NDExSignInButton = props => {
 
   const handleCredentialsSignOn = userInfo => {
     const loginInfo = { isGoogle: false, loginDetails: userInfo }
-    const userImage = userInfo.image
-
+   
     const loggedInUser = {
       externalId: userInfo.details.externalId,
       firstName: userInfo.details.firstName,
@@ -139,7 +140,7 @@ const NDExSignInButton = props => {
 
     window.localStorage.setItem(LOGGED_IN_USER, JSON.stringify(loggedInUser));
 
-    onSuccessLogin(loginInfo, userImage)
+    onSuccessLogin(loginInfo)
   }
 
   const onGoogleSuccess = res => {
@@ -168,9 +169,9 @@ const NDExSignInButton = props => {
 
   const onGoogleAgreement = (res) => {
     const newLoginInfo = { isGoogle: true, loginDetails: res }
-    const userImage = res.profileObj.imageUrl
+    
     refreshTokenSetup(res);
-    onSuccessLogin(newLoginInfo, userImage)
+    onSuccessLogin(newLoginInfo);
   }
 
   const refreshTokenSetup = (res) => {
@@ -206,7 +207,7 @@ const NDExSignInButton = props => {
     onLoginStateUpdated(loginInfo);
   };
 
-  const onSuccessLogin = (loginInfo, userImage) => {
+  const onSuccessLogin = (loginInfo) => {
     setLoginInfo(loginInfo);
     console.log('onSuccess loginInfo: ', loginInfo);
     if (loginInfo.isGoogle) {
@@ -316,38 +317,18 @@ const NDExSignInButton = props => {
     return loginInfo.loginDetails.profileObj.name;
   }
 
-  const getNDExAvatar = ()=> {
-    const userName = getNDExUsername();
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.image }>{ loginInfo.loginDetails.image ? "" : userName ? userName.trim().substring(0,1) : "A"}</Avatar> 
-  }
-
-  const getGoogleAvatar = () => {
-    const userName = getGoogleUsername();
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.profileObj.imageUrl }>{ loginInfo.loginDetails.profileObj.imageUrl ? "" : userName ? userName.trim().substring(0,1) : "A"}</Avatar> 
-  }
-
   const getIcon = () => {
-    return loginInfo 
-    ? loginInfo.isGoogle ? getGoogleAvatar() : getNDExAvatar()
+    return loginInfo && userProfile && !isUserProfileLoading 
+    ? <Avatar className={iconClassName(size)} src={ userProfile.image }>{ userProfile.image ? "" : userProfile.userName.trim().substring(0,1) }</Avatar>
     : <AccountCircleIcon className={iconClassName(size)}/>
   }
 
   const getTitle = () => {
-    return loginInfo ? 'Signed in as ' + (loginInfo.isGoogle ? getGoogleUsername() : getNDExUsername()): 'Sign in to NDEx'
+    return loginInfo && userProfile && !isUserProfileLoading ? 'Signed in as ' + userProfile.userName : 'Sign in to NDEx'
   }
 
-  let userName = ''
-  let userImage = null
-  if (loginInfo !== null) {
-
-    if (loginInfo.isGoogle) {
-      userName = loginInfo.loginDetails.profileObj.name
-      userImage = loginInfo.loginDetails.profileObj.imageUrl
-    } else {
-      userName = loginInfo.loginDetails.fullName
-      userImage = loginInfo.loginDetails.image
-    }
-  }
+  const userName = loginInfo && userProfile && !isUserProfileLoading ? userProfile.firstName + " " + userProfile.lastName : ''
+  const userImage = loginInfo && userProfile && !isUserProfileLoading ? userProfile.image : undefined;
 
   return (
     <React.Fragment>
