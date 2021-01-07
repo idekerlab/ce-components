@@ -7,8 +7,8 @@ import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import ndexClient from 'ndex-client';
 
-import { useCyNDExValue } from '../CyNDExContext'
-import { NDExAccountContext } from '../NDExAccountContext'
+import { useCyNDExValue } from '../contexts/CyNDExContext'
+import { NDExAccountContext } from '../contexts/NDExAccountContext'
 
 const styles = theme => ({
   button: {

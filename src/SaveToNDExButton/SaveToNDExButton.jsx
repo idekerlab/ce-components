@@ -4,7 +4,7 @@ import Icon from '@material-ui/core/Icon'
 import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import SaveIcon from '@material-ui/icons/Save'
-import { NDExAccountContext } from '../NDExAccountContext'
+import { NDExAccountContext } from '../contexts/NDExAccountContext'
 import ndexClient from 'ndex-client'
 
 const styles = theme => ({

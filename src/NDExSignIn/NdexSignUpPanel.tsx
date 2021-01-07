@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { Button, TextField, FormControlLabel, Checkbox, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
-import { NDExAccountContext } from '../NDExAccountContext'
+import { NDExAccountContext } from '../contexts/NDExAccountContext'
 import { isValidEmail, useCreateUser } from '../api/ndex'
 import { validateLogin } from './validateCredentials'
 import NDExUserModel from '../model/NDExUserModel'

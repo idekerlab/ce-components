@@ -1,7 +1,7 @@
-import { useUserProfile } from './api/ndex';
+import { useUserProfile } from '../api/ndex';
 import React, {createContext, useContext, useState} from 'react';
 
-import NDExAccountModel from './model/NDExAccountModel'
+import NDExAccountModel from '../model/NDExAccountModel'
 
 export const NDExAccountContext = createContext<Partial<NDExAccountModel>>({});
 

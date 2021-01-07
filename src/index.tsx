@@ -10,5 +10,5 @@ export * from './NDExSignIn'
 export { default as SaveToNDExButton } from './SaveToNDExButton'
 export * from './SaveToNDExButton'
 
-export { CyNDExProvider } from './CyNDExContext'
-export { NDExAccountProvider } from './NDExAccountContext'
+export { CyNDExProvider } from './contexts/CyNDExContext'
+export { NDExAccountProvider } from './contexts/NDExAccountContext'

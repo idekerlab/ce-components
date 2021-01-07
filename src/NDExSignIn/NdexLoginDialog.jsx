@@ -16,7 +16,7 @@ import { makeStyles } from '@material-ui/styles'
 
 import NdexLogo from './assets/images/ndex-logo.svg'
 
-import { NDExAccountContext } from '../NDExAccountContext'
+import { NDExAccountContext } from '../contexts/NDExAccountContext'
 
 import NdexSignUpPanel from './NdexSignUpPanel'
 import ForgotPasswordPanel from './ForgotPasswordPanel'

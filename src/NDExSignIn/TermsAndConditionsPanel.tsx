@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Button, Typography, FormControlLabel, Checkbox } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
-import { NDExAccountContext } from '../NDExAccountContext'
+import { NDExAccountContext } from '../contexts/NDExAccountContext'
 import { useCreateGoogleUser } from '../api/ndex'
 
 const useStyles = makeStyles({

@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import NdexLoginDialog from './NdexLoginDialog'
-import { NDExAccountContext } from '../NDExAccountContext'
+import { NDExAccountContext } from '../contexts/NDExAccountContext'
 import Avatar from '@material-ui/core/Avatar';
 import NdexUserInfoPopover from './NdexUserInfoPopover';
 
