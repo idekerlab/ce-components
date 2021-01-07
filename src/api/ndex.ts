@@ -70,10 +70,45 @@ export const getUserByUserName = async (ndexServer, api, userName) => {
   return callApi(apiCall, undefined);
 }
 
+export const useUserProfile = (ndexServer: string) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [data, setData] = useState<string>();
+
+  const execute = async (email) => {
+    try {
+      setIsLoading(true);
+      setError(undefined);
+      setData(undefined);
+      if (email) {
+        const newData: any = await getUserByEmail(ndexServer, 'v2', email);
+        setData(newData.parsedBody);
+        return newData;
+      } else {
+        setData(undefined);
+        return undefined;
+      }
+    } catch (e) {
+      setError('Error getting user profile: ' + e);
+      setIsLoading(false);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return {
+    isLoading,
+    error,
+    data,
+    execute: useCallback(execute, []), // to avoid infinite calls when inside a `useEffect`
+  };
+}
+
 export const emailNewPassword = async (ndexServer, api, userId) => {
   const path = '/' + api + '/user/' + userId + '/password?forgot=true';
   const apiCall = ndexServer + path;
-  
+
   const putConfig = {
     method: 'PUT',
   }
@@ -87,7 +122,7 @@ export const isValidEmail = (inputString: string) => {
   return emailRE.test(String(inputString).toLowerCase())
 }
 
-export const getUserBySearch = async (ndexServer:string, api:string, emailAddress:string) => {
+export const getUserBySearch = async (ndexServer: string, api: string, emailAddress: string) => {
 
   let response;
 
@@ -142,21 +177,21 @@ export const useResetPassword = (ndexServer) => {
   };
 }
 
-export const createUser = async (ndexServer : string, api : string, user : NDExUserModel) => {
- 
-    const path = '/' + api + '/user';
-    const apiCall = ndexServer + path;
-    
-    const postConfig = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user)
-    }
-  
-    return callTextApi(apiCall, postConfig);
-  
+export const createUser = async (ndexServer: string, api: string, user: NDExUserModel) => {
+
+  const path = '/' + api + '/user';
+  const apiCall = ndexServer + path;
+
+  const postConfig = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  }
+
+  return callTextApi(apiCall, postConfig);
+
 }
 
 export const useCreateUser = (ndexServer) => {
@@ -164,13 +199,13 @@ export const useCreateUser = (ndexServer) => {
   const [error, setError] = useState<string>();
   const [data, setData] = useState<string>();
 
-  const execute = async (user : NDExUserModel) => {
+  const execute = async (user: NDExUserModel) => {
     try {
       setIsLoading(true);
       setError(undefined);
       setData(undefined);
-      const newData : any = await createUser(ndexServer, 'v2', user);
-     
+      const newData: any = await createUser(ndexServer, 'v2', user);
+
       setData(newData.parsedBody)
       return newData;
     } catch (e) {
@@ -192,17 +227,16 @@ export const useCreateUser = (ndexServer) => {
 
 const USERNAME_LENGTH_LIMIT = 95;
 
-export const getUniqueUserName = async (ndexServer, api, email: string)=> {
+export const getUniqueUserName = async (ndexServer, api, email: string) => {
   let userName = email.replace(/@.*$/, '');
 
   if (userName.length > USERNAME_LENGTH_LIMIT) {
-      // get first $scope.limitOfUserNameLength of user name
-      userName = userName.substring(0, USERNAME_LENGTH_LIMIT);
+    // get first $scope.limitOfUserNameLength of user name
+    userName = userName.substring(0, USERNAME_LENGTH_LIMIT);
   }
   try {
     let counter = 1;
-    while(await getUserByUserName(ndexServer, api, userName))
-    {
+    while (await getUserByUserName(ndexServer, api, userName)) {
       userName = userName + counter
       counter++
     }
@@ -212,11 +246,11 @@ export const getUniqueUserName = async (ndexServer, api, email: string)=> {
   return userName
 }
 
-export const createGoogleUser = async (ndexServer : string, api : string, tokenId : string, email : string) => {
- 
+export const createGoogleUser = async (ndexServer: string, api: string, tokenId: string, email: string) => {
+
   const path = '/' + api + '/user?idtoken=' + tokenId;
   const apiCall = ndexServer + path;
-  
+
   const userName = await getUniqueUserName(ndexServer, api, email)
 
   const postConfig = {
@@ -224,7 +258,7 @@ export const createGoogleUser = async (ndexServer : string, api : string, tokenI
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({'userName': userName})
+    body: JSON.stringify({ 'userName': userName })
   }
 
   return callTextApi(apiCall, postConfig);
@@ -232,33 +266,33 @@ export const createGoogleUser = async (ndexServer : string, api : string, tokenI
 }
 
 export const useCreateGoogleUser = (ndexServer) => {
-const [isLoading, setIsLoading] = useState(false);
-const [error, setError] = useState<string>();
-const [data, setData] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [data, setData] = useState<string>();
 
-const execute = async (tokenId, email) => {
-  try {
-    setIsLoading(true);
-    setError(undefined);
-    setData(undefined);
-    const newData : any = await createGoogleUser(ndexServer, 'v2', tokenId, email);
-   
-    setData(newData.parsedBody)
-    return newData;
-  } catch (e) {
-    setError('Cannot create user: ' + e);
-    setIsLoading(false);
-    throw e;
-  } finally {
-    setIsLoading(false);
+  const execute = async (tokenId, email) => {
+    try {
+      setIsLoading(true);
+      setError(undefined);
+      setData(undefined);
+      const newData: any = await createGoogleUser(ndexServer, 'v2', tokenId, email);
+
+      setData(newData.parsedBody)
+      return newData;
+    } catch (e) {
+      setError('Cannot create user: ' + e);
+      setIsLoading(false);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
   }
-}
 
-return {
-  isLoading,
-  error,
-  data,
-  execute: useCallback(execute, []), // to avoid infinite calls when inside a `useEffect`
-};
+  return {
+    isLoading,
+    error,
+    data,
+    execute: useCallback(execute, []), // to avoid infinite calls when inside a `useEffect`
+  };
 }
 
