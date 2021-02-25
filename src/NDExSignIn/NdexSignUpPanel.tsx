@@ -142,6 +142,8 @@ const NdexSignUpPanel = props => {
         } else {
           setShowEmailValidation(true)
         }
+      }).catch((error)=> {
+        setErrorMessage("Cannot create user: " + error);
       });
     } else {
       setErrorMessage(formError);

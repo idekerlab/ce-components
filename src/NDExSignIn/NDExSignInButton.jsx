@@ -6,6 +6,12 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import NdexLoginDialog from './NdexLoginDialog'
 import { NDExAccountContext } from '../NDExAccountContext'
 import Avatar from '@material-ui/core/Avatar';
+import NdexUserInfoPopover from './NdexUserInfoPopover';
+
+import { useGoogleLogin, useGoogleLogout } from 'react-google-login';
+import { validateLogin } from './validateCredentials'
+
+import { getUserByEmail } from '../api/ndex'
 
 const styles = theme => ({
   button: {
@@ -45,12 +51,20 @@ const DEFAULT_HANDLER = loginState => {
   // Add actual handler here...
 }
 
+const LOGGED_IN_USER = 'loggedInUser'
 
 const NDExSignInButton = props => {
 
   const { classes } = props;
 
-  const { ndexServerURL, loginInfo, setLoginInfo } = useContext(NDExAccountContext);
+  const { ndexServerURL, 
+    loginInfo, 
+    setLoginInfo, 
+    googleClientId,
+    userProfile,
+    isUserProfileLoading,
+    getUserProfile
+   } = useContext(NDExAccountContext);
 
   const { onLoginStateUpdated, myAccountURL } = props
 
@@ -59,11 +73,20 @@ const NDExSignInButton = props => {
     onUpdate = onLoginStateUpdated
   }
 
-  const [isOpen, setOpen] = useState(false)
+  const [isDialogOpen, setDialogOpen] = useState(false)
 
   const setDialogState = dialogState => {
-    setOpen(dialogState)
+    setDialogOpen(dialogState)
   }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const isPopoverOpen = Boolean(anchorEl);
+
   const defaultSignInAction = () => {
     console.log("")
   };
@@ -79,7 +102,205 @@ const NDExSignInButton = props => {
     size
   } = props
 
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const [tempGoogleAuth, setTempGoogleAuth] = useState();
+
+  const onLoginSuccess = event => {
+    console.log('Login success:', event)
+  }
+
+  const onGoogleLogoutSuccess = () => {
+    console.log("Google logged out");
+  }
+
+  const onLogout = () => {
+    console.log('Logout:' + loginInfo.isGoogle);
+    if (loginInfo.isGoogle) {
+      signOut();
+    }
+    else {
+      window.localStorage.removeItem(LOGGED_IN_USER);
+    }
+    setLoginInfo(null);
+    onLoginStateUpdated(null)
+    setDialogState(false);
+  }
+
+  const handleCredentialsSignOn = userInfo => {
+    const loginInfo = { isGoogle: false, loginDetails: userInfo }
+   
+    const loggedInUser = {
+      externalId: userInfo.details.externalId,
+      firstName: userInfo.details.firstName,
+      lastName: userInfo.details.lastName,
+      token: userInfo.password,
+      userName: userInfo.id
+    }
+
+    window.localStorage.setItem(LOGGED_IN_USER, JSON.stringify(loggedInUser));
+
+    onSuccessLogin(loginInfo)
+  }
+
+  const onGoogleSuccess = res => {
+    console.log('onGoogleSuccess called');
+
+    const newNdexCredential = 
+    { loaded: true,
+      isLogin: true,
+      isGoogle: true, 
+      oauth: res 
+    }
+
+    getUserByEmail(ndexServerURL, 'v2', newNdexCredential.oauth.profileObj.email).then(()=>{
+      onGoogleAgreement(res);
+    }).catch((error) => {
+      if (isOpen) {
+        setTempGoogleAuth(res);
+        setContentMode(content_mode.SIGN_TERMS_AND_CONDITIONS);
+      } else {
+        setLoginInfo(null);
+        getUserProfile(null);
+        onLoginStateUpdated(null);
+      }
+    })
+  }
+
+  const onGoogleAgreement = (res) => {
+    const newLoginInfo = { isGoogle: true, loginDetails: res }
+    
+    refreshTokenSetup(res);
+    onSuccessLogin(newLoginInfo);
+  }
+
+  const refreshTokenSetup = (res) => {
+
+    let refreshTiming = (res.expires_in || 3600 - 5 * 60) * 1000;
+    console.log('Will refresh auth token in ' + refreshTiming);
+
+    const refreshToken = async () => {
+      const newAuthRes = await res.reloadAuthResponse();
+      refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+      console.log('newAuthRes: ', newAuthRes);
+      console.log('Will refresh auth token in ' + refreshTiming);
+      onTokenRefresh(res, newAuthRes);
+      setTimeout(refreshToken, refreshTiming);
+    }
+
+    setTimeout(refreshToken, refreshTiming);
+  }
+
+  const onTokenRefresh = (res, authResponse) => {
+    const loginDetails = res;
+    console.log("Login Details", loginDetails);
+
+    let refreshedLoginDetails = Object.assign({}, loginDetails);
+
+    refreshedLoginDetails['id_token'] = authResponse.id_token;
+
+    console.log("Refreshed Login Details", refreshedLoginDetails);
+
+    const loginInfo = { isGoogle: true, loginDetails: refreshedLoginDetails };
+
+    setLoginInfo(loginInfo);
+    onLoginStateUpdated(loginInfo);
+  };
+
+  const onSuccessLogin = (loginInfo) => {
+    setLoginInfo(loginInfo);
+    console.log('onSuccess loginInfo: ', loginInfo);
+    if (loginInfo.isGoogle) {
+      getUserProfile(loginInfo.loginDetails.profileObj.email);
+    } else {
+      getUserProfile(loginInfo.loginDetails.details.emailAddress);
+    }
+    onLoginStateUpdated(loginInfo);
+    setDialogState(false);
+  }
+
+  const handleError = error => {
+    console.log('Error:', error)
+    setErrorMessage(error)
+  }
+
+  const onError = (error, googleSSO) => {
+    props.handleError(error)
+    setIsGoogle({ googleSSO })
+  }
+
+  // Unique ID for each NDEx server
+  let googleSSO = true
  
+  if (googleClientId === undefined || googleClientId === null) {
+    googleSSO = false
+  }
+
+  const onFailure = err => {
+    const message =
+      (err.details &&
+        err.details.startsWith(
+          'Not a valid origin for the client: http://localhost:'
+        )) ||
+      (err.error && err['error']) ||
+      JSON.stringify(err)
+    props.onError(message, false)
+  }
+
+  const onAutoLoadFinished = (signedIn) => {
+
+    console.log('onAutoLoadFinished(' + signedIn + ')');
+
+    const loggedInUserString = window.localStorage.getItem('loggedInUser');
+
+    if (loggedInUserString) {
+      console.log("LoggedInUser: " + loggedInUserString);
+      const loggedInUser = JSON.parse(loggedInUserString);
+
+      validateLogin(loggedInUser.userName, loggedInUser.token, ndexServerURL).then(data => {
+        console.log('auto login returned Validation:', data)
+
+        if (data.error !== null) {
+          setErrorMessage(data.error.message)
+          setLoginInfo(null);
+          onLoginStateUpdated(null)
+        } else {
+          handleCredentialsSignOn({
+            id: loggedInUser.userName,
+            password: loggedInUser.token,
+            ndexServerURL,
+            fullName: data.userData.firstName + ' ' + data.userData.lastName,
+            image: data.userData.image,
+            details: data.userData
+          })
+        }
+      })
+    } else {
+      // Check current login status
+      if (!signedIn) {
+        setLoginInfo(null);
+        onLoginStateUpdated(null)
+      }
+    }
+  }
+
+  const { signIn, loaded } = useGoogleLogin({
+    clientId: googleClientId,
+    scope: 'profile email',
+    onSuccess: onGoogleSuccess,
+    onFailure: onFailure,
+    onAutoLoadFinished: onAutoLoadFinished,
+    isSignedIn: true,
+    fetchBasicProfile: true
+  })
+
+  const { signOut } = useGoogleLogout({
+    clientId: googleClientId,
+    onLogoutSuccess: onGoogleLogoutSuccess,
+    onFailure: onFailure
+  })
+
+
   const iconClassName = (size) => {
     switch (size) {
       case 'small': return classes.iconSmall;
@@ -96,25 +317,18 @@ const NDExSignInButton = props => {
     return loginInfo.loginDetails.profileObj.name;
   }
 
-  const getNDExAvatar = ()=> {
-    const userName = getNDExUsername();
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.image }>{ loginInfo.loginDetails.image ? "" : userName ? userName.trim().substring(0,1) : "A"}</Avatar> 
-  }
-
-  const getGoogleAvatar = () => {
-    const userName = getGoogleUsername();
-    return <Avatar className={iconClassName(size)} src={ loginInfo.loginDetails.profileObj.imageUrl }>{ loginInfo.loginDetails.profileObj.imageUrl ? "" : userName ? userName.trim().substring(0,1) : "A"}</Avatar> 
-  }
-
   const getIcon = () => {
-    return loginInfo 
-    ? loginInfo.isGoogle ? getGoogleAvatar() : getNDExAvatar()
+    return loginInfo && userProfile && !isUserProfileLoading 
+    ? <Avatar className={iconClassName(size)} src={ userProfile.image }>{ userProfile.image ? "" : userProfile.userName.trim().substring(0,1) }</Avatar>
     : <AccountCircleIcon className={iconClassName(size)}/>
   }
 
   const getTitle = () => {
-    return loginInfo ? 'Signed in as ' + (loginInfo.isGoogle ? getGoogleUsername() : getNDExUsername()): 'Sign in to NDEx'
+    return loginInfo && userProfile && !isUserProfileLoading ? 'Signed in as ' + userProfile.userName : 'Sign in to NDEx'
   }
+
+  const userName = loginInfo && userProfile && !isUserProfileLoading ? userProfile.firstName + " " + userProfile.lastName : ''
+  const userImage = loginInfo && userProfile && !isUserProfileLoading ? userProfile.image : undefined;
 
   return (
     <React.Fragment>
@@ -126,7 +340,14 @@ const NDExSignInButton = props => {
         <Button
           className={classes.button}
           variant={variant}
-          onClick={() => setDialogState(true)}
+          onClick={(event) => {
+              if (loginInfo) {
+                setAnchorEl(event.currentTarget);
+              } else {
+                setDialogState(true)
+              }
+            }
+          }
           size={size}
         >
           { getIcon()
@@ -135,10 +356,30 @@ const NDExSignInButton = props => {
       </Tooltip>
       <NdexLoginDialog
         setDialogState={setDialogState}
-        isOpen={isOpen}
+        isOpen={isDialogOpen}
         ndexServer={ndexServerURL}
         onLoginStateUpdated={onUpdate}
         myAccountURL = {myAccountURL}
+        onLoginSuccess = {onLoginSuccess}
+        onLogout = {onLogout}
+        handleCredentialsSignOn = {handleCredentialsSignOn}
+        onGoogleSuccess = {onGoogleSuccess}
+        onError = {onError}
+        handleError = {handleError}
+        errorMessage = { errorMessage }
+        signIn = {signIn}
+        googleSSO = {googleSSO}
+        onGoogleAgreement = {onGoogleAgreement}
+      />
+      <NdexUserInfoPopover
+        userName={userName}
+        userImage={userImage}
+        isOpen={isPopoverOpen}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        myAccountURL = {myAccountURL}
+        ndexServer={ndexServerURL}
+        onLogout={onLogout}
       />
     </React.Fragment>
   )
