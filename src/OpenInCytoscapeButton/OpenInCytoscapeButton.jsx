@@ -9,6 +9,7 @@ import ndexClient from 'ndex-client';
 
 import { useCyNDExValue } from '../CyNDExContext'
 import { NDExAccountContext } from '../NDExAccountContext'
+import LargeNetworkDialog from './LargeNetworkDialog'
 
 const styles = theme => ({
   button: {
@@ -44,29 +45,44 @@ const OpenInCytoscapeButton = props => {
 
   const ndexAccountContext = useContext(NDExAccountContext);
 
+  const [largeNetworkDialogOpen, setLargeNetworkDialogOpen] = useState(false);
+
   const { ndexServerURL, loginInfo } = ndexAccountContext ? ndexAccountContext : {undefined, undefined};
 
-  const importNetwork = () => {
+  const importNetworkFromNDEx = () => {
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);
     cyndex.setNDExServer(ndexServerURL);
-    if (ndexNetworkProperties) {
-      if (loginInfo) {
-        if (loginInfo.isGoogle) {
-          cyndex.setAuthToken(loginInfo.loginDetails.tokenId);
-        } else {
-          cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
-        }
+    if (loginInfo) {
+      if (loginInfo.isGoogle) {
+        cyndex.setAuthToken(loginInfo.loginDetails.tokenId);
+      } else {
+        cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
       }
-      const accessKey = ndexNetworkProperties.accessKey;
-      const idToken = ndexNetworkProperties.idToken;
-      cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, idToken)
-        .then(response => {
-          typeof onSuccess !== "undefined" && onSuccess(response.data)
-        })
-        .catch(error => { 
-          typeof onFailure !== "undefined" && onFailure(error) 
-        });
+    }
+    const accessKey = ndexNetworkProperties.accessKey;
+    const idToken = ndexNetworkProperties.idToken;
+    cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, idToken)
+      .then(response => {
+        typeof onSuccess !== "undefined" && onSuccess(response.data)
+      })
+      .catch(error => { 
+        typeof onFailure !== "undefined" && onFailure(error) 
+      });
+  }
+
+  const importNetwork = () => {
+    
+
+    if (ndexNetworkProperties) {
+      const objectCount = ndexNetworkProperties.nodeCount + ndexNetworkProperties.edgeCount;
+      console.log('ndexNetworkProperties: ', ndexNetworkProperties);
+      if (objectCount > 100000) {
+
+      } else {
+        importNetworkFromNDEx();
+      }
     } else {
+      const cyndex = new ndexClient.CyNDEx(cyRESTPort);
       fetchCX().then(cx => {
         cyndex.postCXNetworkToCytoscape(cx)
           .then(response => {
@@ -121,7 +137,10 @@ const OpenInCytoscapeButton = props => {
           </Icon>
         </Button></span>
       </Tooltip>
-
+      <LargeNetworkDialog isOpen={largeNetworkDialogOpen} 
+        setIsOpen={setLargeNetworkDialogOpen} 
+        importNetworkFunction={importNetworkFromNDEx}
+      />
     </React.Fragment>
   )
 }
