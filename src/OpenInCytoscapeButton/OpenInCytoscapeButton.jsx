@@ -49,7 +49,8 @@ const OpenInCytoscapeButton = props => {
 
   const { ndexServerURL, loginInfo } = ndexAccountContext ? ndexAccountContext : {undefined, undefined};
 
-  const importNetworkFromNDEx = () => {
+  const importNetworkFromNDEx = (createView) => {
+    console.log('importNetworkFromNDEx createView: ', createView);
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);
     cyndex.setNDExServer(ndexServerURL);
     if (loginInfo) {
@@ -61,7 +62,7 @@ const OpenInCytoscapeButton = props => {
     }
     const accessKey = ndexNetworkProperties.accessKey;
     const idToken = ndexNetworkProperties.idToken;
-    cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, idToken)
+    cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, createView)
       .then(response => {
         typeof onSuccess !== "undefined" && onSuccess(response.data)
       })
@@ -70,16 +71,25 @@ const OpenInCytoscapeButton = props => {
       });
   }
 
+  const getObjectCount = (ndexNetworkProperties) => {
+    if (!ndexNetworkProperties.summary) { return undefined;}
+
+    return (ndexNetworkProperties.summary.edgeCount ? ndexNetworkProperties.summary.edgeCount : 0) 
+      + (ndexNetworkProperties.summary.nodeCount ? ndexNetworkProperties.summary.nodeCount : 0);
+  }
+
   const importNetwork = () => {
     
-
     if (ndexNetworkProperties) {
-      const objectCount = ndexNetworkProperties.nodeCount + ndexNetworkProperties.edgeCount;
-      console.log('ndexNetworkProperties: ', ndexNetworkProperties);
-      if (objectCount > 100000) {
-
+      const objectCount = getObjectCount(ndexNetworkProperties);
+    
+      if (!objectCount) {
+        importNetworkFromNDEx(undefined);
+      }
+      else if (objectCount > 100000) {
+        setLargeNetworkDialogOpen(true);
       } else {
-        importNetworkFromNDEx();
+        importNetworkFromNDEx(true);
       }
     } else {
       const cyndex = new ndexClient.CyNDEx(cyRESTPort);

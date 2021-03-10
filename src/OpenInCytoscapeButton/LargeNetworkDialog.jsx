@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react'
 
+
+
 import {
   Dialog,
   DialogTitle,
@@ -8,7 +10,13 @@ import {
   Button,
   Typography,
   Divider,
-  Avatar
+  Avatar,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Popover
 } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
@@ -42,11 +50,26 @@ const useStyles = makeStyles({
   userIcon: {
     height: '1.5em',
     width: '1.5em'
+  },
+  formlabel: {
+
   }
 })
 
+
+
+
 const LargeNetworkDialog = props => {
   const classes = useStyles()
+
+  const  [viewBehaviour, setViewBehaviour] = useState('none');
+
+  const createViewTip = (<Typography>Choose this option to import the network and display it <u>preserving the original layout and visual styling info</u>. Your computer might crash if it's older or not powerful enough.</Typography>)
+  const dontCreateViewTip = ( <Typography>Choose this option to import the network without generating a graphic rendering. The <u>original layout and visual styling info will be lost</u>. You can decide to generate a graphic rendering later if desired.</Typography>)
+
+  const handleChange = (event) => {
+    setViewBehaviour(event.target.value);
+  };
 
   const {
     isOpen,
@@ -61,17 +84,29 @@ const LargeNetworkDialog = props => {
       </DialogTitle>
 
       <DialogContent className={classes.content}>
-        Preamble and choices.
-
+        <Typography>
+        You are about to import a large network. Creating a view for a network of this size requires large amounts of memory and could cause problems on less powerful computers. Please choose one of the following options.
+        </Typography>
+        <FormControl component="fieldset">
+ 
+    <RadioGroup aria-label="viewBehaviour" name="viewBehaviour1" value={viewBehaviour} onChange={handleChange}>
+    <FormControlLabel value="createView" control={<Radio />} label={
+      <Typography className={classes.formlabel}><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>
+    } />
+    <FormControlLabel value="dontCreateView" control={<Radio />} label={
+      <Typography className={classes.formlabel}><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
+    } />
+  </RadioGroup>
+</FormControl>
       </DialogContent>
       <Divider />
       <DialogActions className={classes.actionPanel}>
         <Button
           variant={'contained'}
-          disabled={true}
+          disabled={viewBehaviour === 'none'}
           onClick={() => {
-            setDialogState(false);
-            importNetworkFunction();
+            setIsOpen(false);
+            importNetworkFunction(viewBehaviour === 'createView');
           }}
           color={'default'}
         >
