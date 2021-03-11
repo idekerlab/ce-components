@@ -41,6 +41,7 @@ const OpenInCytoscapeButton = props => {
 
   const cyNDExValue = useCyNDExValue();
   const cyRESTAvailable = cyNDExValue.state.available;
+  const cyNDExStatus = cyNDExValue.state.status;
   const cyRESTPort = cyNDExValue.state.port;
 
   const ndexAccountContext = useContext(NDExAccountContext);
@@ -78,12 +79,55 @@ const OpenInCytoscapeButton = props => {
       + (ndexNetworkProperties.summary.nodeCount ? ndexNetworkProperties.summary.nodeCount : 0);
   }
 
+  /**
+   * Compares decimal separated version strings.
+   * Returns:
+   *    1 if a > b
+   *    0 if a = b
+   *   -1 if a < b
+   * 
+   * @param {*} a 
+   * @param {*} b 
+   * @returns 
+   */
+  const checkVersion = (a,b) => {
+    let x=a.split('.').map(e=> parseInt(e));
+    let y=b.split('.').map(e=> parseInt(e));
+    let z = "";
+    let i = 0;
+    for(i=0;i<x.length;i++) {
+        if(x[i] === y[i]) {
+            z+="e";
+        } else
+        if(x[i] > y[i]) {
+            z+="m";
+        } else {
+            z+="l";
+        }
+    }
+    if (!z.match(/[l|m]/g)) {
+      return 0;
+    } else if (z.split('e').join('')[0] == "m") {
+      return 1;
+    } else {
+      return -1;
+    }
+}
+
+const cyndexHasExplicitViewSupport = () => {
+  const oldestVersion = '3.4.0';
+
+  const checkVersionResult = checkVersion(cyNDExStatus.appVersion, oldestVersion);
+  return checkVersionResult >= 0;
+}
+
   const importNetwork = () => {
     
     if (ndexNetworkProperties) {
       const objectCount = getObjectCount(ndexNetworkProperties);
-    
-      if (!objectCount) {
+      
+
+      if (!objectCount || !cyndexHasExplicitViewSupport()) {
         importNetworkFromNDEx(undefined);
       }
       else if (objectCount > 100000) {

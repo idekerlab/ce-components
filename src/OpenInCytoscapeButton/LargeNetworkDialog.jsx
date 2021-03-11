@@ -1,7 +1,5 @@
 import React, { useState, useContext } from 'react'
 
-
-
 import {
   Dialog,
   DialogTitle,
@@ -17,8 +15,11 @@ import {
   FormControl,
   FormLabel,
   Popover,
-  Tooltip
+  Tooltip,
+  IconButton
 } from '@material-ui/core'
+
+import InfoIcon from '@material-ui/icons/InfoOutlined'
 
 import { makeStyles } from '@material-ui/styles'
 
@@ -82,7 +83,7 @@ const LargeNetworkDialog = props => {
   return (
     <Dialog className={classes.root} open={isOpen}>
       <DialogTitle disableTypography={true} className={classes.title}>
-        <Typography variant={'subtitle1'}>Open Large Network in Cytoscape</Typography>
+        <Typography variant={'h6'}>Open Large Network in Cytoscape</Typography>
       </DialogTitle>
 
       <DialogContent className={classes.content}>
@@ -93,12 +94,24 @@ const LargeNetworkDialog = props => {
  
     <RadioGroup aria-label="viewBehaviour" name="viewBehaviour1" value={viewBehaviour} onChange={handleChange}>
     <FormControlLabel className={classes.formlabel} value="createView" control={<Radio />} label={
+      <div>
+      <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>  
       <Tooltip title={createViewTip}>
-      <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>
+       <IconButton size={'small'} disableFocusRipple disableRipple className={classes.button}>
+        <InfoIcon />
+      </IconButton>
       </Tooltip>
+      </div>
     } />
     <FormControlLabel className={classes.formlabel} value="dontCreateView" control={<Radio />} label={
+      <div>
       <Typography display="inline"><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
+      <Tooltip title={dontCreateViewTip}>
+       <IconButton size={'small'} disableFocusRipple disableRipple className={classes.button}>
+        <InfoIcon />
+      </IconButton>
+      </Tooltip>
+      </div>
     } />
   </RadioGroup>
 </FormControl>
@@ -111,6 +124,7 @@ const LargeNetworkDialog = props => {
           onClick={() => {
             setIsOpen(false);
             importNetworkFunction(viewBehaviour === 'createView');
+            setViewBehaviour('none')
           }}
           color={'default'}
         >
@@ -120,6 +134,7 @@ const LargeNetworkDialog = props => {
           variant={'contained'}
           onClick={() => {
             setIsOpen(false);
+            setViewBehaviour('none')
           }}
           color={'default'}
         >
