@@ -131,7 +131,7 @@ const OpenInCytoscapeButton = props => {
     <React.Fragment>
       <Tooltip
         disableFocusListener
-        title="Open this network in Cytoscape Desktop"
+        title={{cyRESTAvailable} ? "Open this network in Cytoscape" : "To use this feature, you need Cytoscape 3.6.0 or higher running on your machine (default port: 1234) and the CyNDEx-2 app installed"}
         placement="bottom"
       >
         <span><Button //Do not add any spaces between the span and button tags. Tooltip interprets these as an array of elements instead of nested elements and will throw an exception.
