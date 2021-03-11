@@ -16,7 +16,8 @@ import {
   FormControlLabel,
   FormControl,
   FormLabel,
-  Popover
+  Popover,
+  Tooltip
 } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
@@ -27,7 +28,7 @@ const useStyles = makeStyles({
     margin: 0
   },
   content: {
-    padding: 0,
+    padding: '2em',
     margin: 0
   },
   title: {
@@ -52,7 +53,8 @@ const useStyles = makeStyles({
     width: '1.5em'
   },
   formlabel: {
-
+    'padding-top': '1em',
+    'padding-left' : '1em'
   }
 })
 
@@ -90,11 +92,13 @@ const LargeNetworkDialog = props => {
         <FormControl component="fieldset">
  
     <RadioGroup aria-label="viewBehaviour" name="viewBehaviour1" value={viewBehaviour} onChange={handleChange}>
-    <FormControlLabel value="createView" control={<Radio />} label={
-      <Typography className={classes.formlabel}><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>
+    <FormControlLabel className={classes.formlabel} value="createView" control={<Radio />} label={
+      <Tooltip title={createViewTip}>
+      <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>
+      </Tooltip>
     } />
-    <FormControlLabel value="dontCreateView" control={<Radio />} label={
-      <Typography className={classes.formlabel}><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
+    <FormControlLabel className={classes.formlabel} value="dontCreateView" control={<Radio />} label={
+      <Typography display="inline"><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
     } />
   </RadioGroup>
 </FormControl>
