@@ -65,20 +65,34 @@ const useStyles = makeStyles({
 const LargeNetworkDialog = props => {
   const classes = useStyles()
 
+  const {
+    isOpen,
+    hasLayout,
+    hasView,
+    setIsOpen,
+    importNetworkFunction
+  } = props
+
   const  [viewBehaviour, setViewBehaviour] = useState('none');
 
-  const createViewTip = (<Typography>Choose this option to import the network and display it <u>preserving the original layout and visual styling info</u>. Your computer might crash if it's older or not powerful enough.</Typography>)
-  const dontCreateViewTip = ( <Typography>Choose this option to import the network without generating a graphic rendering. The <u>original layout and visual styling info will be lost</u>. You can decide to generate a graphic rendering later if desired.</Typography>)
+  const createViewTip = hasView || hasLayout 
+    ? (<Typography>Choose this option to import the network and display it <u>preserving the original layout and visual styling info</u>. Your computer might crash if it's older or not powerful enough.</Typography>)
+    : (<Typography>Choose this option to import the network and display it <u>generating any necessary layout or visual styling info</u>. Your computer might crash if it's older or not powerful enough.</Typography>)
+  const dontCreateViewTip =  hasView || hasLayout 
+    ? ( <Typography>Choose this option to import the network without generating a graphic rendering. The <u>original layout and visual styling info will be lost</u>. You can decide to generate a graphic rendering later if desired.</Typography>)
+   : ( <Typography>Choose this option to import the network without generating a graphic rendering. You can decide to generate a graphic rendering later if desired.</Typography>)
+  
+  const createViewLabel = hasView || hasLayout 
+    ? <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>  
+    : <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are generated)</Typography>  
+
+  const dontCreateViewLabel = hasView || hasLayout 
+    ? <Typography display="inline"><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
+    :<Typography display="inline"><b>Don't Create View</b>  (Faster, no layout or visual properties are generated)</Typography>
 
   const handleChange = (event) => {
     setViewBehaviour(event.target.value);
   };
-
-  const {
-    isOpen,
-    setIsOpen,
-    importNetworkFunction
-  } = props
 
   return (
     <Dialog className={classes.root} open={isOpen}>
@@ -95,7 +109,7 @@ const LargeNetworkDialog = props => {
     <RadioGroup aria-label="viewBehaviour" name="viewBehaviour1" value={viewBehaviour} onChange={handleChange}>
     <FormControlLabel className={classes.formlabel} value="createView" control={<Radio />} label={
       <div>
-      <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>  
+      { createViewLabel }
       <Tooltip title={createViewTip}>
        <IconButton size={'small'} disableFocusRipple disableRipple className={classes.button}>
         <InfoIcon />
@@ -105,7 +119,7 @@ const LargeNetworkDialog = props => {
     } />
     <FormControlLabel className={classes.formlabel} value="dontCreateView" control={<Radio />} label={
       <div>
-      <Typography display="inline"><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
+      { dontCreateViewLabel }
       <Tooltip title={dontCreateViewTip}>
        <IconButton size={'small'} disableFocusRipple disableRipple className={classes.button}>
         <InfoIcon />

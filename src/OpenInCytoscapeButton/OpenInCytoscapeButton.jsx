@@ -153,6 +153,7 @@ const cyndexHasExplicitViewSupport = () => {
   }
 
   const {
+    classes,
     variant,
     size,
     onSuccess,
@@ -161,7 +162,12 @@ const cyndexHasExplicitViewSupport = () => {
     ndexNetworkProperties
   } = props
 
-  const { classes } = props
+  const getMetaDataElement = (metaData , aspectName) => {
+    return metaData.find( element => element && element['name'] === aspectName);
+  }
+
+  const hasLayout = ndexNetworkProperties.summary ?  ndexNetworkProperties.summary.hasLayout : false;
+  const hasView = ndexNetworkProperties.metaData ? getMetaDataElement(ndexNetworkProperties.metaData,'cyVisualProperties') ? true : false : false;
 
   const iconClassName = (size) => {
     switch (size) {
@@ -194,6 +200,8 @@ const cyndexHasExplicitViewSupport = () => {
       <LargeNetworkDialog isOpen={largeNetworkDialogOpen} 
         setIsOpen={setLargeNetworkDialogOpen} 
         importNetworkFunction={importNetworkFromNDEx}
+        hasLayout={hasLayout}
+        hasView={hasView}
       />
     </React.Fragment>
   )
