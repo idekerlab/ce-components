@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "@rollup/plugin-image": "^2.0.5",
+    "caniuse-lite": "^1.0.30001202",
     "react-google-login": "^5.1.21",
     "rollup-plugin-postcss": "^3.1.5"
   }

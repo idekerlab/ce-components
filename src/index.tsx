@@ -10,5 +10,8 @@ export * from './NDExSignIn'
 export { default as SaveToNDExButton } from './SaveToNDExButton'
 export * from './SaveToNDExButton'
 
+export { default as NdexSignUpPanel}  from './NDExSignIn/NdexSignUpPanel'
+export * from './NDExSignIn/NdexSignUpPanel'
+
 export { CyNDExProvider } from './CyNDExContext'
 export { NDExAccountProvider } from './NDExAccountContext'
