@@ -17,7 +17,8 @@ const useStyles = makeStyles({
   },
   loginButton: {
     marginTop: '0.7em',
-    'background-color': '#337ab7'
+    'background-color': '#337ab7',
+    'text-transform': 'none'
   },
   formControl: {
     flexGrow: 2
