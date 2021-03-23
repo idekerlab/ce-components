@@ -80,7 +80,8 @@ const NdexLoginDialog = props => {
     myAccountURL,
     onLoginSuccess,
     onLogout,
-    handleCredentialsSignOn,
+    handleNDExSignOn,
+    onSuccessLogin,
     onGoogleSuccess,
     onError,
     handleError,
@@ -103,7 +104,8 @@ const NdexLoginDialog = props => {
           setDialogState={setDialogState}
           onLoginSuccess={onLoginSuccess}
           onLogout={onLogout}
-          handleCredentialsSignOn={handleCredentialsSignOn}
+          handleNDExSignOn={handleNDExSignOn}
+          onSuccessLogin={onSuccessLogin}
           onSuccess={onGoogleSuccess}
           onError={onError}
           handleError={handleError}
@@ -115,7 +117,7 @@ const NdexLoginDialog = props => {
         />
       )
       case content_mode.SIGN_UP: return (
-        <NdexSignUpPanel ndexServer={ndexServer}  handleCredentialsSignOn={handleCredentialsSignOn} />
+        <NdexSignUpPanel ndexServer={ndexServer}  handleNDExSignOn={handleNDExSignOn} />
       )
       case content_mode.FORGOT_PASSWORD: return (
         <ForgotPasswordPanel ndexServer={ndexServer}/>

@@ -36,7 +36,7 @@ const useStyles = makeStyles({
 const NdexSignUpPanel = props => {
   const classes = useStyles()
 
-  const { handleCredentialsSignOn } = props
+  const { handleNDExSignOn, onSuccessLogin } = props
 
   const { ndexServerURL } = useContext(NDExAccountContext);
 
@@ -64,21 +64,20 @@ const NdexSignUpPanel = props => {
     setErrorMessage(undefined)
 
     validateLogin(userName, password, ndexServerURL).then(data => {
-      console.log('returned Validation:', data)
-
+ 
       setTimeout(() => {
 
         if (data.error !== null) {
           setErrorMessage(data.error.message)
         } else {
-          handleCredentialsSignOn({
+          handleNDExSignOn({
             id: data.userData.userName,
             password,
             ndexServer: ndexServerURL,
             fullName: data.userData.firstName + ' ' + data.userData.lastName,
             image: data.userData.image,
             details: data.userData
-          })
+          }, onSuccessLogin)
         }
       }, 500)
     })

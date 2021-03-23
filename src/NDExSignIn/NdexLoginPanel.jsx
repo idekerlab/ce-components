@@ -35,7 +35,8 @@ const NdexLoginPanel = props => {
   const {
     onLoginSuccess,
     onSuccess,
-    handleCredentialsSignOn,
+    handleNDExSignOn,
+    onSuccessLogin,
     onError,
     handleError,
     error,
@@ -63,7 +64,8 @@ const NdexLoginPanel = props => {
       <Paper className={classes.rightComponent}>
         <NdexCredentialsLoginPanel
           onLoginSuccess={onLoginSuccess}
-          handleCredentialsSignOn={handleCredentialsSignOn}
+          handleNDExSignOn={handleNDExSignOn}
+          onSuccessLogin={onSuccessLogin}
           handleError={handleError}
           error={error}
           ndexServer={ndexServer}
