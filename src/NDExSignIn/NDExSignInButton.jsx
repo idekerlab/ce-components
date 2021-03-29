@@ -107,11 +107,11 @@ const NDExSignInButton = props => {
   const [tempGoogleAuth, setTempGoogleAuth] = useState();
 
   const onLoginSuccess = event => {
-    console.log('Login success:', event)
+    //console.log('Login success:', event)
   }
 
   const onGoogleLogoutSuccess = () => {
-    console.log("Google logged out");
+    //console.log("Google logged out");
   }
 
   const onLogout = () => {
@@ -249,16 +249,13 @@ const NDExSignInButton = props => {
 
   const onAutoLoadFinished = (signedIn) => {
 
-    console.log('onAutoLoadFinished(' + signedIn + ')');
-
     const loggedInUserString = window.localStorage.getItem('loggedInUser');
 
     if (loggedInUserString) {
-      console.log("LoggedInUser: " + loggedInUserString);
+     
       const loggedInUser = JSON.parse(loggedInUserString);
 
       validateLogin(loggedInUser.userName, loggedInUser.token, ndexServerURL).then(data => {
-        console.log('auto login returned Validation:', data)
 
         if (data.error !== null) {
           setErrorMessage(data.error.message)
