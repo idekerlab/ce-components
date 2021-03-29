@@ -6,7 +6,8 @@ import { isValidEmail, useCreateUser } from '../api/ndex'
 import { validateLogin } from './validateCredentials'
 import NDExUserModel from '../model/NDExUserModel'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(
+ {
   signUpHeader: {
     display: 'flex',
     flexDirection: 'column',
@@ -36,7 +37,7 @@ const useStyles = makeStyles({
 const NdexSignUpPanel = props => {
   const classes = useStyles()
 
-  const { handleNDExSignOn, onSuccessLogin } = props
+  const { handleNDExSignOn, onSuccessLogin,  onWaitForEmailValidation } = props
 
   const { ndexServerURL } = useContext(NDExAccountContext);
 
@@ -140,6 +141,7 @@ const NdexSignUpPanel = props => {
           loginAfterCreate(user.userName, user.password)
         } else {
           setShowEmailValidation(true)
+          onWaitForEmailValidation();
         }
       }).catch((error)=> {
         setErrorMessage("Cannot create user: " + error);
