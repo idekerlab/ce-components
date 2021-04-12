@@ -9,6 +9,7 @@ import ndexClient from 'ndex-client';
 
 import { useCyNDExValue } from '../CyNDExContext'
 import { NDExAccountContext } from '../NDExAccountContext'
+import LargeNetworkDialog from './LargeNetworkDialog'
 
 const styles = theme => ({
   button: {
@@ -40,33 +41,102 @@ const OpenInCytoscapeButton = props => {
 
   const cyNDExValue = useCyNDExValue();
   const cyRESTAvailable = cyNDExValue.state.available;
+  const cyNDExStatus = cyNDExValue.state.status;
   const cyRESTPort = cyNDExValue.state.port;
 
   const ndexAccountContext = useContext(NDExAccountContext);
 
+  const [largeNetworkDialogOpen, setLargeNetworkDialogOpen] = useState(false);
+
   const { ndexServerURL, loginInfo } = ndexAccountContext ? ndexAccountContext : {undefined, undefined};
 
-  const importNetwork = () => {
+  const importNetworkFromNDEx = (createView) => {
+    console.log('importNetworkFromNDEx createView: ', createView);
     const cyndex = new ndexClient.CyNDEx(cyRESTPort);
     cyndex.setNDExServer(ndexServerURL);
-    if (ndexNetworkProperties) {
-      if (loginInfo) {
-        if (loginInfo.isGoogle) {
-          cyndex.setAuthToken(loginInfo.loginDetails.tokenId);
-        } else {
-          cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
-        }
+    if (loginInfo) {
+      if (loginInfo.isGoogle) {
+        cyndex.setAuthToken(loginInfo.loginDetails.tokenId);
+      } else {
+        cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
       }
-      const accessKey = ndexNetworkProperties.accessKey;
-      const idToken = ndexNetworkProperties.idToken;
-      cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, idToken)
-        .then(response => {
-          typeof onSuccess !== "undefined" && onSuccess(response.data)
-        })
-        .catch(error => { 
-          typeof onFailure !== "undefined" && onFailure(error) 
-        });
+    }
+    const accessKey = ndexNetworkProperties.accessKey;
+    const idToken = ndexNetworkProperties.idToken;
+    cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, createView)
+      .then(response => {
+        typeof onSuccess !== "undefined" && onSuccess(response.data)
+      })
+      .catch(error => { 
+        typeof onFailure !== "undefined" && onFailure(error) 
+      });
+  }
+
+  const getObjectCount = (ndexNetworkProperties) => {
+    if (!ndexNetworkProperties.summary) { return undefined;}
+
+    return (ndexNetworkProperties.summary.edgeCount ? ndexNetworkProperties.summary.edgeCount : 0) 
+      + (ndexNetworkProperties.summary.nodeCount ? ndexNetworkProperties.summary.nodeCount : 0);
+  }
+
+  /**
+   * Compares decimal separated version strings.
+   * Returns:
+   *    1 if a > b
+   *    0 if a = b
+   *   -1 if a < b
+   * 
+   * @param {*} a 
+   * @param {*} b 
+   * @returns 
+   */
+  const checkVersion = (a,b) => {
+    let x=a.split('.').map(e=> parseInt(e));
+    let y=b.split('.').map(e=> parseInt(e));
+    let z = "";
+    let i = 0;
+    for(i=0;i<x.length;i++) {
+        if(x[i] === y[i]) {
+            z+="e";
+        } else
+        if(x[i] > y[i]) {
+            z+="m";
+        } else {
+            z+="l";
+        }
+    }
+    if (!z.match(/[l|m]/g)) {
+      return 0;
+    } else if (z.split('e').join('')[0] == "m") {
+      return 1;
     } else {
+      return -1;
+    }
+}
+
+const cyndexHasExplicitViewSupport = () => {
+  const oldestVersion = '3.4.0';
+
+  const checkVersionResult = checkVersion(cyNDExStatus.appVersion, oldestVersion);
+  return checkVersionResult >= 0;
+}
+
+  const importNetwork = () => {
+    
+    if (ndexNetworkProperties) {
+      const objectCount = getObjectCount(ndexNetworkProperties);
+      
+
+      if (!objectCount || !cyndexHasExplicitViewSupport()) {
+        importNetworkFromNDEx(undefined);
+      }
+      else if (objectCount > 100000) {
+        setLargeNetworkDialogOpen(true);
+      } else {
+        importNetworkFromNDEx(true);
+      }
+    } else {
+      const cyndex = new ndexClient.CyNDEx(cyRESTPort);
       fetchCX().then(cx => {
         cyndex.postCXNetworkToCytoscape(cx)
           .then(response => {
@@ -83,6 +153,7 @@ const OpenInCytoscapeButton = props => {
   }
 
   const {
+    classes,
     variant,
     size,
     onSuccess,
@@ -91,7 +162,12 @@ const OpenInCytoscapeButton = props => {
     ndexNetworkProperties
   } = props
 
-  const { classes } = props
+  const getMetaDataElement = (metaData , aspectName) => {
+    return metaData.find( element => element && element['name'] === aspectName);
+  }
+
+  const hasLayout = ndexNetworkProperties && ndexNetworkProperties.summary ?  ndexNetworkProperties.summary.hasLayout : false;
+  const hasView = ndexNetworkProperties && ndexNetworkProperties.metaData ? getMetaDataElement(ndexNetworkProperties.metaData,'cyVisualProperties') ? true : false : false;
 
   const iconClassName = (size) => {
     switch (size) {
@@ -121,7 +197,12 @@ const OpenInCytoscapeButton = props => {
           </Icon>
         </Button></span>
       </Tooltip>
-
+      <LargeNetworkDialog isOpen={largeNetworkDialogOpen} 
+        setIsOpen={setLargeNetworkDialogOpen} 
+        importNetworkFunction={importNetworkFromNDEx}
+        hasLayout={hasLayout}
+        hasView={hasView}
+      />
     </React.Fragment>
   )
 }
