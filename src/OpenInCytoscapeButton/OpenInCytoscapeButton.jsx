@@ -166,8 +166,8 @@ const cyndexHasExplicitViewSupport = () => {
     return metaData.find( element => element && element['name'] === aspectName);
   }
 
-  const hasLayout = ndexNetworkProperties.summary ?  ndexNetworkProperties.summary.hasLayout : false;
-  const hasView = ndexNetworkProperties.metaData ? getMetaDataElement(ndexNetworkProperties.metaData,'cyVisualProperties') ? true : false : false;
+  const hasLayout = ndexNetworkProperties && ndexNetworkProperties.summary ?  ndexNetworkProperties.summary.hasLayout : false;
+  const hasView = ndexNetworkProperties && ndexNetworkProperties.metaData ? getMetaDataElement(ndexNetworkProperties.metaData,'cyVisualProperties') ? true : false : false;
 
   const iconClassName = (size) => {
     switch (size) {

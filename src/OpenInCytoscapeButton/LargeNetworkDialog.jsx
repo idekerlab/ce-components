@@ -84,11 +84,11 @@ const LargeNetworkDialog = props => {
   
   const createViewLabel = hasView || hasLayout 
     ? <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are preserved)</Typography>  
-    : <Typography display="inline"><b>Create View</b> (Resource Intensive, layout and visual properties are generated)</Typography>  
+    : <Typography display="inline"><b>Create View</b> (Resource Intensive)</Typography>  
 
   const dontCreateViewLabel = hasView || hasLayout 
     ? <Typography display="inline"><b>Don't Create View</b>  (Faster, layout and visual properties are discarded)</Typography>
-    :<Typography display="inline"><b>Don't Create View</b>  (Faster, no layout or visual properties are generated)</Typography>
+    :<Typography display="inline"><b>Don't Create View</b>  (Faster)</Typography>
 
   const handleChange = (event) => {
     setViewBehaviour(event.target.value);
