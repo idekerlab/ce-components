@@ -7,6 +7,7 @@ export const CyNDExContext = createContext({ available: false, port: 1234 });
 export const CyNDExProvider = ({ port, children }) => {
   let initialState = {
     available: false,
+    status: undefined,
     port: port
   };
   
@@ -15,12 +16,14 @@ export const CyNDExProvider = ({ port, children }) => {
       case 'setAvailable':
         return {
           ...state,
-          available: true
+          available: true,
+          status: action.payload
         };
       case 'setUnavailable':
           return {
             ...state,
-            available: false
+            available: false,
+            status: undefined
           };
       default:
         throw new Error();
@@ -34,7 +37,7 @@ export const CyNDExProvider = ({ port, children }) => {
     if (pollCyREST) {
       cyndex.getCyNDExStatus().then(
         response => {
-          dispatch({ type: "setAvailable"})
+          dispatch({ type: "setAvailable", payload: response.data})
         },
         err => {
           dispatch({ type: "setUnavailable" })
