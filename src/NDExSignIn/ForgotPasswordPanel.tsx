@@ -11,14 +11,16 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  item: {
-    marginRight: '1em'
+  itemRight: {
+    marginLeft: '1em'
   }
 })
 
 
-const ForgotPasswordPanel = () => {
+const ForgotPasswordPanel = (props) => {
   const classes = useStyles()
+
+  const {onSuccessReset,  onFailReset } = props;
 
   const { ndexServerURL } = useContext(NDExAccountContext);
 
@@ -38,7 +40,7 @@ const ForgotPasswordPanel = () => {
   }
 
   const handleResetPassword = () => {
-    execute(email)
+    execute(email).then( () => {onSuccessReset(email)}).catch( (e) => {onFailReset(e)});
   }
 
   return (
@@ -56,6 +58,7 @@ const ForgotPasswordPanel = () => {
         onChange={handleEmailChange}
       />
       <Button
+       className={classes.itemRight}
         variant={'contained'}
         disabled={email.trim().length < 1 || isLoading}
         onClick={handleResetPassword} >Reset Password</Button>

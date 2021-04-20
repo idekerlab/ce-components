@@ -45,7 +45,7 @@ const FIELD_NAME = {
 }
 
 const NdexCredentialsLoginPanel = props => {
-  const { handleCredentialsSignOn, ndexServer, setContentMode } = props
+  const { onSuccessLogin, handleNDExSignOn, ndexServer, setContentMode } = props
   const classes = useStyles()
 
   const [isLoading, setLoading] = useState(false)
@@ -70,14 +70,14 @@ const NdexCredentialsLoginPanel = props => {
         if (data.error !== null) {
           setErrorMessage(data.error.message)
         } else {
-          handleCredentialsSignOn({
+          handleNDExSignOn({
             id,
             password,
             ndexServer,
             fullName: data.userData.firstName + ' ' + data.userData.lastName,
             image: data.userData.image,
             details: data.userData
-          })
+          }, onSuccessLogin)
         }
       }, 500)
     })

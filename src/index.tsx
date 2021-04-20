@@ -13,5 +13,10 @@ export * from './SaveToNDExButton'
 export { default as NdexSignUpPanel}  from './NDExSignIn/NdexSignUpPanel'
 export * from './NDExSignIn/NdexSignUpPanel'
 
+export { default as ForgotPasswordPanel } from './NDExSignIn/ForgotPasswordPanel'
+export * from './NDExSignIn/ForgotPasswordPanel'
+
+export { handleNDExSignOn } from './NDExSignIn/handleNDExSignOn'
+
 export { CyNDExProvider } from './CyNDExContext'
 export { NDExAccountProvider } from './NDExAccountContext'

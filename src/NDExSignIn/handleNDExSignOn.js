@@ -1,27 +1,19 @@
-async function validateLogin(id, password, ndexServer) {
-  const auth = 'Basic ' + btoa(id + ':' + password)
-  const headers = {
-    authorization: auth
-  }
-  const url = ndexServer + '/v2/user?valid=true'
+const LOGGED_IN_USER = 'loggedInUser'
 
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: headers
-  })
-  const status = res.status
-  let userData = await res.json()
+const handleNDExSignOn = (userInfo, onSuccessLogin) => {
+  const loginInfo = { isGoogle: false, loginDetails: userInfo }
+ 
+  const loggedInUser = {
+    externalId: userInfo.details.externalId,
+    firstName: userInfo.details.firstName,
+    lastName: userInfo.details.lastName,
+    token: userInfo.password,
+    userName: userInfo.id
+  }
 
-  let error = null
-  if (status !== 200) {
-    error = userData
-    userData = null
-  }
-  return {
-    status,
-    userData,
-    error
-  }
+  window.localStorage.setItem(LOGGED_IN_USER, JSON.stringify(loggedInUser));
+
+  onSuccessLogin(loginInfo)
 }
 
-export { validateLogin }
+export { handleNDExSignOn }

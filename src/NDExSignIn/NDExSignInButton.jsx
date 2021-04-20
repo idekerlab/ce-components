@@ -10,7 +10,7 @@ import NdexUserInfoPopover from './NdexUserInfoPopover';
 
 import { useGoogleLogin, useGoogleLogout } from 'react-google-login';
 import { validateLogin } from './validateCredentials'
-
+import { handleNDExSignOn } from './handleNDExSignOn'
 import { getUserByEmail } from '../api/ndex'
 
 const styles = theme => ({
@@ -51,7 +51,7 @@ const DEFAULT_HANDLER = loginState => {
   // Add actual handler here...
 }
 
-const LOGGED_IN_USER = 'loggedInUser'
+
 
 const NDExSignInButton = props => {
 
@@ -67,6 +67,8 @@ const NDExSignInButton = props => {
    } = useContext(NDExAccountContext);
 
   const { onLoginStateUpdated, myAccountURL } = props
+
+  const LOGGED_IN_USER = 'loggedInUser'
 
   let onUpdate = DEFAULT_HANDLER
   if (onLoginStateUpdated !== null && onLoginStateUpdated !== undefined) {
@@ -127,21 +129,7 @@ const NDExSignInButton = props => {
     setDialogState(false);
   }
 
-  const handleCredentialsSignOn = userInfo => {
-    const loginInfo = { isGoogle: false, loginDetails: userInfo }
-   
-    const loggedInUser = {
-      externalId: userInfo.details.externalId,
-      firstName: userInfo.details.firstName,
-      lastName: userInfo.details.lastName,
-      token: userInfo.password,
-      userName: userInfo.id
-    }
-
-    window.localStorage.setItem(LOGGED_IN_USER, JSON.stringify(loggedInUser));
-
-    onSuccessLogin(loginInfo)
-  }
+  
 
   const onGoogleSuccess = res => {
     console.log('onGoogleSuccess called');
@@ -262,14 +250,14 @@ const NDExSignInButton = props => {
           setLoginInfo(null);
           onLoginStateUpdated(null)
         } else {
-          handleCredentialsSignOn({
+          handleNDExSignOn({
             id: loggedInUser.userName,
             password: loggedInUser.token,
             ndexServerURL,
             fullName: data.userData.firstName + ' ' + data.userData.lastName,
             image: data.userData.image,
             details: data.userData
-          })
+          }, onSuccessLogin)
         }
       })
     } else {
@@ -359,7 +347,8 @@ const NDExSignInButton = props => {
         myAccountURL = {myAccountURL}
         onLoginSuccess = {onLoginSuccess}
         onLogout = {onLogout}
-        handleCredentialsSignOn = {handleCredentialsSignOn}
+        handleNDExSignOn = {handleNDExSignOn}
+        onSuccessLogin= {onSuccessLogin}
         onGoogleSuccess = {onGoogleSuccess}
         onError = {onError}
         handleError = {handleError}
