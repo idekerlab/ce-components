@@ -5,7 +5,7 @@ import logo from '../assets/images/cytoscape-logo.svg'
 import logoDisabled from '../assets/images/cytoscape-logo-mono-light.svg'
 import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
-import ndexClient from 'ndex-client';
+import ndexClient from 'ndex-client'
 
 import { useCyNDExValue } from '../CyNDExContext'
 import { NDExAccountContext } from '../NDExAccountContext'
@@ -16,67 +16,83 @@ const styles = theme => ({
     color: '#EA9123',
     borderColor: '#EA9123',
     '&:active': {
-      borderColor: '#EA9123'
+      borderColor: '#EA9123',
     },
-    'line-height': 0
+    'line-height': 0,
   },
   iconSmall: {
     height: '22px',
-    'margin-left': '2px'
+    'margin-left': '2px',
   },
   iconMedium: {
-    height: '24px'
+    height: '24px',
   },
   iconLarge: {
-    height: '26px'
+    height: '26px',
   },
   buttonIcon: {
     height: '100%',
-    width: '100%'
-  }
-
+    width: '100%',
+  },
 })
 
 const OpenInCytoscapeButton = props => {
+  const cyNDExValue = useCyNDExValue()
+  const cyRESTAvailable = cyNDExValue.state.available
+  const cyNDExStatus = cyNDExValue.state.status
+  const cyRESTPort = cyNDExValue.state.port
 
-  const cyNDExValue = useCyNDExValue();
-  const cyRESTAvailable = cyNDExValue.state.available;
-  const cyNDExStatus = cyNDExValue.state.status;
-  const cyRESTPort = cyNDExValue.state.port;
+  const ndexAccountContext = useContext(NDExAccountContext)
 
-  const ndexAccountContext = useContext(NDExAccountContext);
+  const [largeNetworkDialogOpen, setLargeNetworkDialogOpen] = useState(false)
 
-  const [largeNetworkDialogOpen, setLargeNetworkDialogOpen] = useState(false);
+  const { ndexServerURL, loginInfo } = ndexAccountContext
+    ? ndexAccountContext
+    : { undefined, undefined }
 
-  const { ndexServerURL, loginInfo } = ndexAccountContext ? ndexAccountContext : {undefined, undefined};
-
-  const importNetworkFromNDEx = (createView) => {
-    console.log('importNetworkFromNDEx createView: ', createView);
-    const cyndex = new ndexClient.CyNDEx(cyRESTPort);
-    cyndex.setNDExServer(ndexServerURL);
+  const importNetworkFromNDEx = createView => {
+    console.log('importNetworkFromNDEx createView: ', createView)
+    const cyndex = new ndexClient.CyNDEx(cyRESTPort)
+    cyndex.setNDExServer(ndexServerURL)
     if (loginInfo) {
       if (loginInfo.isGoogle) {
-        cyndex.setAuthToken(loginInfo.loginDetails.tokenId);
+        cyndex.setAuthToken(loginInfo.loginDetails.tokenId)
       } else {
-        cyndex.setBasicAuth(loginInfo.loginDetails.id, loginInfo.loginDetails.password);
+        cyndex.setBasicAuth(
+          loginInfo.loginDetails.id,
+          loginInfo.loginDetails.password
+        )
       }
     }
-    const accessKey = ndexNetworkProperties.accessKey;
-    const idToken = ndexNetworkProperties.idToken;
-    cyndex.postNDExNetworkToCytoscape(ndexNetworkProperties.uuid, accessKey, createView)
+    const accessKey = ndexNetworkProperties.accessKey
+    const idToken = ndexNetworkProperties.idToken
+    cyndex
+      .postNDExNetworkToCytoscape(
+        ndexNetworkProperties.uuid,
+        accessKey,
+        createView
+      )
       .then(response => {
-        typeof onSuccess !== "undefined" && onSuccess(response.data)
+        typeof onSuccess !== 'undefined' && onSuccess(response.data)
       })
-      .catch(error => { 
-        typeof onFailure !== "undefined" && onFailure(error) 
-      });
+      .catch(error => {
+        typeof onFailure !== 'undefined' && onFailure(error)
+      })
   }
 
-  const getObjectCount = (ndexNetworkProperties) => {
-    if (!ndexNetworkProperties.summary) { return undefined;}
+  const getObjectCount = ndexNetworkProperties => {
+    if (!ndexNetworkProperties.summary) {
+      return undefined
+    }
 
-    return (ndexNetworkProperties.summary.edgeCount ? ndexNetworkProperties.summary.edgeCount : 0) 
-      + (ndexNetworkProperties.summary.nodeCount ? ndexNetworkProperties.summary.nodeCount : 0);
+    return (
+      (ndexNetworkProperties.summary.edgeCount
+        ? ndexNetworkProperties.summary.edgeCount
+        : 0) +
+      (ndexNetworkProperties.summary.nodeCount
+        ? ndexNetworkProperties.summary.nodeCount
+        : 0)
+    )
   }
 
   /**
@@ -85,71 +101,73 @@ const OpenInCytoscapeButton = props => {
    *    1 if a > b
    *    0 if a = b
    *   -1 if a < b
-   * 
-   * @param {*} a 
-   * @param {*} b 
-   * @returns 
+   *
+   * @param {*} a
+   * @param {*} b
+   * @returns
    */
-  const checkVersion = (a,b) => {
-    let x=a.split('.').map(e=> parseInt(e));
-    let y=b.split('.').map(e=> parseInt(e));
-    let z = "";
-    let i = 0;
-    for(i=0;i<x.length;i++) {
-        if(x[i] === y[i]) {
-            z+="e";
-        } else
-        if(x[i] > y[i]) {
-            z+="m";
-        } else {
-            z+="l";
-        }
+  const checkVersion = (a, b) => {
+    let x = a.split('.').map(e => parseInt(e))
+    let y = b.split('.').map(e => parseInt(e))
+    let z = ''
+    let i = 0
+    for (i = 0; i < x.length; i++) {
+      if (x[i] === y[i]) {
+        z += 'e'
+      } else if (x[i] > y[i]) {
+        z += 'm'
+      } else {
+        z += 'l'
+      }
     }
     if (!z.match(/[l|m]/g)) {
-      return 0;
-    } else if (z.split('e').join('')[0] == "m") {
-      return 1;
+      return 0
+    } else if (z.split('e').join('')[0] == 'm') {
+      return 1
     } else {
-      return -1;
+      return -1
     }
-}
+  }
 
-const cyndexHasExplicitViewSupport = () => {
-  const oldestVersion = '3.4.0';
+  const cyndexHasExplicitViewSupport = () => {
+    const oldestVersion = '3.4.0'
 
-  const checkVersionResult = checkVersion(cyNDExStatus.appVersion, oldestVersion);
-  return checkVersionResult >= 0;
-}
+    const checkVersionResult = checkVersion(
+      cyNDExStatus.appVersion,
+      oldestVersion
+    )
+    return checkVersionResult >= 0
+  }
 
   const importNetwork = () => {
-    
     if (ndexNetworkProperties) {
-      const objectCount = getObjectCount(ndexNetworkProperties);
-      
+      const objectCount = getObjectCount(ndexNetworkProperties)
 
       if (!objectCount || !cyndexHasExplicitViewSupport()) {
-        importNetworkFromNDEx(undefined);
-      }
-      else if (objectCount > 100000) {
-        setLargeNetworkDialogOpen(true);
+        importNetworkFromNDEx(undefined)
+      } else if (objectCount > 100000) {
+        setLargeNetworkDialogOpen(true)
       } else {
-        importNetworkFromNDEx(true);
+        importNetworkFromNDEx(true)
       }
     } else {
-      const cyndex = new ndexClient.CyNDEx(cyRESTPort);
-      fetchCX().then(cx => {
-        cyndex.postCXNetworkToCytoscape(cx)
-          .then(response => {
-            typeof onSuccess !== "undefined" && onSuccess(response.data)
-          })
-          .catch(error => { 
-            typeof onFailure !== "undefined" && onFailure(error) 
-          });
-      }, error => { 
-        typeof onFailure !== "undefined" && onFailure(error) 
-      });
+      const cyndex = new ndexClient.CyNDEx(cyRESTPort)
+      fetchCX().then(
+        cx => {
+          cyndex
+            .postCXNetworkToCytoscape(cx)
+            .then(response => {
+              typeof onSuccess !== 'undefined' && onSuccess(response.data)
+            })
+            .catch(error => {
+              typeof onFailure !== 'undefined' && onFailure(error)
+            })
+        },
+        error => {
+          typeof onFailure !== 'undefined' && onFailure(error)
+        }
+      )
     }
-
   }
 
   const {
@@ -159,21 +177,32 @@ const cyndexHasExplicitViewSupport = () => {
     onSuccess,
     onFailure,
     fetchCX,
-    ndexNetworkProperties
+    ndexNetworkProperties,
   } = props
 
-  const getMetaDataElement = (metaData , aspectName) => {
-    return metaData.find( element => element && element['name'] === aspectName);
+  const getMetaDataElement = (metaData, aspectName) => {
+    return metaData.find(element => element && element['name'] === aspectName)
   }
 
-  const hasLayout = ndexNetworkProperties && ndexNetworkProperties.summary ?  ndexNetworkProperties.summary.hasLayout : false;
-  const hasView = ndexNetworkProperties && ndexNetworkProperties.metaData ? getMetaDataElement(ndexNetworkProperties.metaData,'cyVisualProperties') ? true : false : false;
+  const hasLayout =
+    ndexNetworkProperties && ndexNetworkProperties.summary
+      ? ndexNetworkProperties.summary.hasLayout
+      : false
+  const hasView =
+    ndexNetworkProperties && ndexNetworkProperties.metaData
+      ? getMetaDataElement(ndexNetworkProperties.metaData, 'cyVisualProperties')
+        ? true
+        : false
+      : false
 
-  const iconClassName = (size) => {
+  const iconClassName = size => {
     switch (size) {
-      case 'small': return classes.iconSmall;
-      case 'large': return classes.iconLarge;
-      default: return classes.iconMedium;
+      case 'small':
+        return classes.iconSmall
+      case 'large':
+        return classes.iconLarge
+      default:
+        return classes.iconMedium
     }
   }
 
@@ -181,24 +210,34 @@ const cyndexHasExplicitViewSupport = () => {
     <React.Fragment>
       <Tooltip
         disableFocusListener
-        title={{cyRESTAvailable} ? "Open this network in Cytoscape" : "To use this feature, you need Cytoscape 3.6.0 or higher running on your machine (default port: 1234) and the CyNDEx-2 app installed"}
+        title={
+          cyRESTAvailable
+            ? 'Open this network in Cytoscape'
+            : 'To use this feature, you need Cytoscape 3.6.0 or higher running on your machine (default port: 1234) and the CyNDEx-2 app installed'
+        }
         placement="bottom"
       >
-        <span><Button //Do not add any spaces between the span and button tags. Tooltip interprets these as an array of elements instead of nested elements and will throw an exception.
-          className={classes.button}
-          variant={variant}
-          disabled={!cyRESTAvailable}
-          onClick={importNetwork}
-          size={size}
-        >
-          Open In Cytoscape
-          <Icon className={iconClassName(size)} >
-            <img className={classes.buttonIcon} src={!cyRESTAvailable ? logoDisabled : logo} />
-          </Icon>
-        </Button></span>
+        <span>
+          <Button //Do not add any spaces between the span and button tags. Tooltip interprets these as an array of elements instead of nested elements and will throw an exception.
+            className={classes.button}
+            variant={variant}
+            disabled={!cyRESTAvailable}
+            onClick={importNetwork}
+            size={size}
+          >
+            Open In Cytoscape
+            <Icon className={iconClassName(size)}>
+              <img
+                className={classes.buttonIcon}
+                src={!cyRESTAvailable ? logoDisabled : logo}
+              />
+            </Icon>
+          </Button>
+        </span>
       </Tooltip>
-      <LargeNetworkDialog isOpen={largeNetworkDialogOpen} 
-        setIsOpen={setLargeNetworkDialogOpen} 
+      <LargeNetworkDialog
+        isOpen={largeNetworkDialogOpen}
+        setIsOpen={setLargeNetworkDialogOpen}
         importNetworkFunction={importNetworkFromNDEx}
         hasLayout={hasLayout}
         hasView={hasView}
