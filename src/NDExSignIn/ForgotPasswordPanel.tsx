@@ -1,68 +1,91 @@
 import React, { useContext, useState } from 'react'
-import { TextField, Button } from '@material-ui/core'
+import { TextField, Button, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { NDExAccountContext } from '../NDExAccountContext'
 import { useResetPassword } from '../api/ndex'
 
 const useStyles = makeStyles({
   signInHeader: {
-    display: 'flex',
-    padding: '1.2em',
-    alignItems: 'center',
-    justifyContent: 'center'
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // width: '100%'
+  },
+  textArea: {
+    width: '100%',
   },
   itemRight: {
-    marginLeft: '1em'
-  }
+    width: '100%',
+  },
 })
 
-
-const ForgotPasswordPanel = (props) => {
+const ForgotPasswordPanel = props => {
   const classes = useStyles()
 
-  const {onSuccessReset,  onFailReset } = props;
+  const { onSuccessReset, onFailReset } = props
 
-  const { ndexServerURL } = useContext(NDExAccountContext);
+  const { ndexServerURL } = useContext(NDExAccountContext)
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('')
 
-  const {
-    isLoading,
-    error,
-    data,
-    execute
-  } = useResetPassword(ndexServerURL);
+  const { isLoading, error, data, execute } = useResetPassword(ndexServerURL)
 
-  
-  const handleEmailChange = (evt) => {
+  const handleEmailChange = evt => {
     const email: string = evt.target.value
     setEmail(email)
   }
 
   const handleResetPassword = () => {
-    execute(email).then( () => {onSuccessReset(email)}).catch( (e) => {onFailReset(e)});
+    execute(email)
+      .then(() => {
+        onSuccessReset(email)
+      })
+      .catch(e => {
+        onFailReset(e)
+      })
   }
 
   return (
-    <div className={classes.signInHeader}>
-      <TextField
-        error={email.trim().length < 0}
-        helperText={error ? error : data ? 'Sent a new password to e-mail of record': undefined }
-        name="id"
-        type="text"
-        placeholder=""
-        required
-        label='Account Name or E-Mail'
-        autoComplete="username"
-        value={email}
-        onChange={handleEmailChange}
-      />
-      <Button
-       className={classes.itemRight}
-        variant={'contained'}
-        disabled={email.trim().length < 1 || isLoading}
-        onClick={handleResetPassword} >Reset Password</Button>
-    </div>
+    <Grid
+      container
+      alignItems={'center'}
+      justifyContent={'center'}
+      className={classes.signInHeader}
+      spacing={1}
+    >
+      <Grid item md={7}>
+        <TextField
+          className={classes.textArea}
+          error={email.trim().length < 0}
+          helperText={
+            error
+              ? error
+              : data
+              ? 'Sent a new password to e-mail of record'
+              : undefined
+          }
+          name="id"
+          type="text"
+          placeholder=""
+          required
+          label="Account Name or E-Mail"
+          autoComplete="username"
+          value={email}
+          onChange={handleEmailChange}
+        />
+      </Grid>
+      <Grid item md={5}>
+        <Button
+          size={'large'}
+          className={classes.itemRight}
+          variant={'contained'}
+          disabled={email.trim().length < 1 || isLoading}
+          onClick={handleResetPassword}
+        >
+          Reset Password
+        </Button>
+      </Grid>
+    </Grid>
   )
 }
 
