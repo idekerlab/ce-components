@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   signInHeader: {
     // display: 'flex',
     // alignItems: 'center',
-    // justifyContent: 'center',
+    justifyContent: 'center',
     // width: '100%'
   },
   textArea: {
@@ -49,7 +49,6 @@ const ForgotPasswordPanel = props => {
     <Grid
       container
       alignItems={'center'}
-      justifyContent={'center'}
       className={classes.signInHeader}
       spacing={1}
     >
