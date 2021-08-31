@@ -5,11 +5,9 @@ import { NDExAccountContext } from '../NDExAccountContext'
 import { useResetPassword } from '../api/ndex'
 
 const useStyles = makeStyles({
-  signInHeader: {
-    // display: 'flex',
-    // alignItems: 'center',
+  root: {
+    width: '100%',
     justifyContent: 'center',
-    // width: '100%'
   },
   textArea: {
     width: '100%',
@@ -19,15 +17,14 @@ const useStyles = makeStyles({
   },
 })
 
-const ForgotPasswordPanel = props => {
+const ForgotPasswordPanel: React.VFC<{
+  onSuccessReset: (string) => string
+  onFailReset: (any) => string
+}> = ({ onSuccessReset, onFailReset = () => {} }) => {
   const classes = useStyles()
 
-  const { onSuccessReset, onFailReset } = props
-
   const { ndexServerURL } = useContext(NDExAccountContext)
-
   const [email, setEmail] = useState('')
-
   const { isLoading, error, data, execute } = useResetPassword(ndexServerURL)
 
   const handleEmailChange = evt => {
@@ -49,7 +46,8 @@ const ForgotPasswordPanel = props => {
     <Grid
       container
       alignItems={'center'}
-      className={classes.signInHeader}
+      alignContent={'center'}
+      className={classes.root}
       spacing={1}
     >
       <Grid item md={7}>
@@ -75,7 +73,6 @@ const ForgotPasswordPanel = props => {
       </Grid>
       <Grid item md={5}>
         <Button
-          size={'large'}
           className={classes.itemRight}
           variant={'contained'}
           disabled={email.trim().length < 1 || isLoading}
