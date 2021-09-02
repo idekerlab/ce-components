@@ -18,9 +18,9 @@ const useStyles = makeStyles({
 })
 
 const ForgotPasswordPanel: React.VFC<{
-  onSuccessReset: (string) => string
-  onFailReset: (any) => string
-}> = ({ onSuccessReset, onFailReset = () => {} }) => {
+  onSuccessReset: (string) => void
+  onFailReset: (any) => void
+}> = ({ onSuccessReset= () => {}, onFailReset = () => {} }) => {
   const classes = useStyles()
 
   const { ndexServerURL } = useContext(NDExAccountContext)
