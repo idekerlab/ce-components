@@ -18,8 +18,8 @@ const useStyles = makeStyles({
 })
 
 const ForgotPasswordPanel: React.VFC<{
-  onSuccessReset: (string) => void
-  onFailReset: (any) => void
+  onSuccessReset?: (string) => void
+  onFailReset?: (any) => void
 }> = ({ onSuccessReset= () => {}, onFailReset = () => {} }) => {
   const classes = useStyles()
 
