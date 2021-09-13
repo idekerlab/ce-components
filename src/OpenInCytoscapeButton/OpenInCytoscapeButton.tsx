@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import Button from '@material-ui/core/Button'
 import Icon from '@material-ui/core/Icon'
 import logo from '../assets/images/cytoscape-logo.svg'
@@ -11,7 +11,7 @@ import { useCyNDExValue } from '../CyNDExContext'
 import { NDExAccountContext } from '../NDExAccountContext'
 import LargeNetworkDialog from './LargeNetworkDialog'
 
-const styles = theme => ({
+const styles = () => ({
   button: {
     color: '#EA9123',
     borderColor: '#EA9123',
@@ -36,24 +36,26 @@ const styles = theme => ({
   },
 })
 
-const OpenInCytoscapeButton = props => {
+/**
+ * Button to open network data in Cytoscape Desktop
+ *
+ * @param props
+ * @returns
+ */
+const OpenInCytoscapeButton = (props) => {
   const cyNDExValue = useCyNDExValue()
   const cyRESTAvailable = cyNDExValue.state.available
   const cyNDExStatus = cyNDExValue.state.status
   const cyRESTPort = cyNDExValue.state.port
 
-  const ndexAccountContext = useContext(NDExAccountContext)
-
+  const { ndexServerURL, loginInfo } = useContext(NDExAccountContext)
   const [largeNetworkDialogOpen, setLargeNetworkDialogOpen] = useState(false)
 
-  const { ndexServerURL, loginInfo } = ndexAccountContext
-    ? ndexAccountContext
-    : { undefined, undefined }
-
-  const importNetworkFromNDEx = createView => {
-    console.log('importNetworkFromNDEx createView: ', createView)
+  const importNetworkFromNDEx = (createView) => {
     const cyndex = new ndexClient.CyNDEx(cyRESTPort)
+
     cyndex.setNDExServer(ndexServerURL)
+
     if (loginInfo) {
       if (loginInfo.isGoogle) {
         cyndex.setAuthToken(loginInfo.loginDetails.tokenId)
@@ -64,23 +66,24 @@ const OpenInCytoscapeButton = props => {
         )
       }
     }
+
     const accessKey = ndexNetworkProperties.accessKey
-    const idToken = ndexNetworkProperties.idToken
+
     cyndex
       .postNDExNetworkToCytoscape(
         ndexNetworkProperties.uuid,
         accessKey,
         createView
       )
-      .then(response => {
+      .then((response) => {
         typeof onSuccess !== 'undefined' && onSuccess(response.data)
       })
-      .catch(error => {
+      .catch((error) => {
         typeof onFailure !== 'undefined' && onFailure(error)
       })
   }
 
-  const getObjectCount = ndexNetworkProperties => {
+  const getObjectCount = (ndexNetworkProperties) => {
     if (!ndexNetworkProperties.summary) {
       return undefined
     }
@@ -106,9 +109,9 @@ const OpenInCytoscapeButton = props => {
    * @param {*} b
    * @returns
    */
-  const checkVersion = (a, b) => {
-    let x = a.split('.').map(e => parseInt(e))
-    let y = b.split('.').map(e => parseInt(e))
+  const checkVersion = (a: string, b: string) => {
+    let x = a.split('.').map((e) => parseInt(e))
+    let y = b.split('.').map((e) => parseInt(e))
     let z = ''
     let i = 0
     for (i = 0; i < x.length; i++) {
@@ -122,7 +125,7 @@ const OpenInCytoscapeButton = props => {
     }
     if (!z.match(/[l|m]/g)) {
       return 0
-    } else if (z.split('e').join('')[0] == 'm') {
+    } else if (z.split('e').join('')[0] === 'm') {
       return 1
     } else {
       return -1
@@ -153,17 +156,17 @@ const OpenInCytoscapeButton = props => {
     } else {
       const cyndex = new ndexClient.CyNDEx(cyRESTPort)
       fetchCX().then(
-        cx => {
+        (cx) => {
           cyndex
             .postCXNetworkToCytoscape(cx)
-            .then(response => {
+            .then((response) => {
               typeof onSuccess !== 'undefined' && onSuccess(response.data)
             })
-            .catch(error => {
+            .catch((error) => {
               typeof onFailure !== 'undefined' && onFailure(error)
             })
         },
-        error => {
+        (error) => {
           typeof onFailure !== 'undefined' && onFailure(error)
         }
       )
@@ -181,7 +184,7 @@ const OpenInCytoscapeButton = props => {
   } = props
 
   const getMetaDataElement = (metaData, aspectName) => {
-    return metaData.find(element => element && element['name'] === aspectName)
+    return metaData.find((element) => element && element['name'] === aspectName)
   }
 
   const hasLayout =
@@ -195,7 +198,7 @@ const OpenInCytoscapeButton = props => {
         : false
       : false
 
-  const iconClassName = size => {
+  const iconClassName = (size) => {
     switch (size) {
       case 'small':
         return classes.iconSmall
@@ -228,6 +231,7 @@ const OpenInCytoscapeButton = props => {
             Open In Cytoscape
             <Icon className={iconClassName(size)}>
               <img
+                alt="Open in Cytoscape"
                 className={classes.buttonIcon}
                 src={!cyRESTAvailable ? logoDisabled : logo}
               />

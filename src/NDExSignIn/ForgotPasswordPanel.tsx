@@ -20,14 +20,14 @@ const useStyles = makeStyles({
 const ForgotPasswordPanel: React.VFC<{
   onSuccessReset?: (string) => void
   onFailReset?: (any) => void
-}> = ({ onSuccessReset= () => {}, onFailReset = () => {} }) => {
+}> = ({ onSuccessReset = () => {}, onFailReset = () => {} }) => {
   const classes = useStyles()
 
   const { ndexServerURL } = useContext(NDExAccountContext)
   const [email, setEmail] = useState('')
   const { isLoading, error, data, execute } = useResetPassword(ndexServerURL)
 
-  const handleEmailChange = evt => {
+  const handleEmailChange = (evt) => {
     const email: string = evt.target.value
     setEmail(email)
   }
@@ -37,7 +37,7 @@ const ForgotPasswordPanel: React.VFC<{
       .then(() => {
         onSuccessReset(email)
       })
-      .catch(e => {
+      .catch((e) => {
         onFailReset(e)
       })
   }

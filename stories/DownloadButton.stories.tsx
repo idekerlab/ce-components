@@ -2,7 +2,6 @@ import React from 'react'
 import { DownloadButton, DownloadProps } from '../src/DownloadButton'
 
 import { withKnobs, object, text } from '@storybook/addon-knobs'
-import { action } from '@storybook/addon-actions'
 
 export default {
   title: 'JSON Download Button',

@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import Button from '@material-ui/core/Button'
-import Icon from '@material-ui/core/Icon'
 import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import SaveIcon from '@material-ui/icons/Save'
 import { NDExAccountContext } from '../NDExAccountContext'
 import ndexClient from 'ndex-client'
 
-const styles = theme => ({
+const styles = () => ({
   button: {
     color: '#4DA1DE',
     borderColor: '#4DA1DE',
@@ -32,7 +31,7 @@ const styles = theme => ({
   toolTipSpan: {},
 })
 
-const SaveToNDExButton = props => {
+const SaveToNDExButton = (props) => {
   const { classes } = props
 
   const { ndexServerURL, loginInfo } = useContext(NDExAccountContext)
@@ -60,23 +59,23 @@ const SaveToNDExButton = props => {
       }
     }
     fetchCX().then(
-      cx => {
+      (cx) => {
         ndex
           .createNetworkFromRawCX(cx)
-          .then(data => {
+          .then((data) => {
             typeof onSuccess !== 'undefined' && onSuccess(data)
           })
-          .catch(error => {
+          .catch((error) => {
             typeof onFailure !== 'undefined' && onFailure(error)
           })
       },
-      error => {
+      (error) => {
         typeof onFailure !== 'undefined' && onFailure(error)
       }
     )
   }
 
-  const iconClassName = size => {
+  const iconClassName = (size) => {
     switch (size) {
       case 'small':
         return classes.iconSmall

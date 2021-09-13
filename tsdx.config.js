@@ -1,7 +1,7 @@
-const postcss = require('rollup-plugin-postcss');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
-const image = require('@rollup/plugin-image');
+const postcss = require('rollup-plugin-postcss')
+const autoprefixer = require('autoprefixer')
+const cssnano = require('cssnano')
+const image = require('@rollup/plugin-image')
 
 module.exports = {
   rollup(config, options) {
@@ -14,9 +14,9 @@ module.exports = {
           }),
         ],
       })
-    );
+    )
 
-    config.plugins.unshift(image());
-    return config;
+    config.plugins.unshift(image())
+    return config
   },
-};
+}

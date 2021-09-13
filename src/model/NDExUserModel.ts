@@ -1,4 +1,3 @@
-
 type NDExUserModel = {
   userName: string
   firstName: string
