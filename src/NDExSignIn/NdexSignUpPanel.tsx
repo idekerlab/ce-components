@@ -271,7 +271,8 @@ const NdexSignUpPanel = (props) => {
             <Typography>{errorMessage ? errorMessage : error}</Typography>
           ))}
         <Button
-          //onClick={signUpAction}
+          color={'secondary'}
+          variant={'outlined'}
           className={classes.lastItem}
           disabled={isLoading}
           type="submit"

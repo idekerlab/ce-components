@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, ReactElement, useState, useEffect } from 'react'
 import { Button, FormControl, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import Typography from '@material-ui/core/Typography'
@@ -8,19 +8,22 @@ import LoadingPanel from './LoadingPanel'
 
 const useStyles = makeStyles({
   root: {
-    padding: '0.8em',
+    height: '100%',
+    width: '23em',
+    padding: '0.3em',
     margin: 0,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
   },
   loginButton: {
-    marginTop: '0.7em',
+    width: '100%',
+    marginTop: '0.5em',
     'background-color': '#337ab7',
     'text-transform': 'none',
   },
   formControl: {
-    flexGrow: 2,
+    width: '100%',
   },
   error: {
     paddingLeft: '0.5em',
@@ -36,6 +39,16 @@ const useStyles = makeStyles({
     marginTop: '0.5em',
     width: '100%',
   },
+  userInfo: {
+    width: '100%',
+  },
+  signup: {
+    height: '100%',
+    display: 'grid',
+    justifyContent: 'left',
+    alignItems: 'center',
+    flexGrow: 1,
+  },
 })
 
 const FIELD_NAME = {
@@ -43,8 +56,17 @@ const FIELD_NAME = {
   PW: 'password',
 }
 
-const NdexCredentialsLoginPanel = (props) => {
-  const { onSuccessLogin, handleNDExSignOn, ndexServer, setContentMode } = props
+const NdexCredentialsLoginPanel: FC<{
+  onSuccessLogin: Function
+  handleNDExSignOn: Function
+  ndexServer: string
+  setContentMode: (mode: string) => void
+}> = ({
+  onSuccessLogin,
+  handleNDExSignOn,
+  ndexServer,
+  setContentMode,
+}): ReactElement => {
   const classes = useStyles()
 
   const [isLoading, setLoading] = useState(false)
@@ -53,9 +75,16 @@ const NdexCredentialsLoginPanel = (props) => {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (id === '' || password === '') {
+      setDisabled(true)
+    } else {
+      setDisabled(false)
+    }
+  }, [id, password])
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log('Submit:', id, password)
 
     setLoading(true)
     setErrorMessage(null)
@@ -94,6 +123,8 @@ const NdexCredentialsLoginPanel = (props) => {
 
     if (id !== '' && password !== '') {
       setDisabled(false)
+    } else {
+      setDisabled(true)
     }
   }
 
@@ -102,8 +133,8 @@ const NdexCredentialsLoginPanel = (props) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className={classes.root}>
+    <form onSubmit={handleSubmit} className={classes.root}>
+      <div className={classes.userInfo}>
         <FormControl className={classes.formControl}>
           <TextField
             name="id"
@@ -136,7 +167,9 @@ const NdexCredentialsLoginPanel = (props) => {
         >
           Sign In with NDEx
         </Button>
+      </div>
 
+      <div className={classes.signup}>
         <Typography variant={'body1'}>
           <a
             href="#"
@@ -146,9 +179,10 @@ const NdexCredentialsLoginPanel = (props) => {
           >
             Forgot your password?
           </a>
-          <br />
-          <br />
-          Need an account?{' '}
+        </Typography>
+
+        <Typography variant={'body2'}>
+          {"Need an account? "}
           <a
             href="#"
             onClick={() => {
@@ -158,22 +192,22 @@ const NdexCredentialsLoginPanel = (props) => {
             Click here to sign up!
           </a>
         </Typography>
-
-        {errorMessage ? (
-          <div className={classes.errorPanel}>
-            <ErrorOutline color={'error'} />
-            <Typography
-              className={classes.error}
-              variant={'body1'}
-              color={'error'}
-            >
-              {errorMessage}
-            </Typography>
-          </div>
-        ) : (
-          <div className={classes.blank} />
-        )}
       </div>
+
+      {errorMessage ? (
+        <div className={classes.errorPanel}>
+          <ErrorOutline color={'error'} />
+          <Typography
+            className={classes.error}
+            variant={'body1'}
+            color={'error'}
+          >
+            {errorMessage}
+          </Typography>
+        </div>
+      ) : (
+        <div className={classes.blank} />
+      )}
     </form>
   )
 }

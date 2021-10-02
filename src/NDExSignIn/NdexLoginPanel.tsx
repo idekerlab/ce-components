@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Paper, Divider } from '@material-ui/core'
+import { Divider } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
 import NdexGoogleLoginPanel from './NdexGoogleLoginPanel'
@@ -8,7 +8,7 @@ import NdexCredentialsLoginPanel from './NdexCredentialsLoginPanel'
 
 const useStyles = makeStyles({
   root: {
-    height: '19em',
+    height: '18em',
     margin: 0,
     padding: '0.6em',
     display: 'flex',
@@ -19,11 +19,12 @@ const useStyles = makeStyles({
     height: '100%',
     alignItem: 'center',
     justifyContent: 'center',
+    marginRight: '0.6em',
   },
   rightComponent: {
     height: '100%',
     marginLeft: '0.6em',
-    flexGrow: 2,
+    flexGrow: 1,
   },
 })
 
@@ -36,8 +37,8 @@ const NdexLoginPanel = (props) => {
     handleNDExSignOn,
     onSuccessLogin,
     onError,
-    handleError,
-    error,
+    // handleError,
+    // error,
     ndexServer,
     googleSignIn,
     googleSSO,
@@ -46,7 +47,7 @@ const NdexLoginPanel = (props) => {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.leftComponent}>
+      <div className={classes.leftComponent}>
         <NdexGoogleLoginPanel
           onError={onError}
           onLoginSuccess={onLoginSuccess}
@@ -55,19 +56,19 @@ const NdexLoginPanel = (props) => {
           googleSignIn={googleSignIn}
           googleSSO={googleSSO}
         />
-      </Paper>
+      </div>
       <Divider orientation="vertical" flexItem />
-      <Paper className={classes.rightComponent}>
+      <div className={classes.rightComponent}>
         <NdexCredentialsLoginPanel
-          onLoginSuccess={onLoginSuccess}
+          // onLoginSuccess={onLoginSuccess}
           handleNDExSignOn={handleNDExSignOn}
           onSuccessLogin={onSuccessLogin}
-          handleError={handleError}
-          error={error}
+          // handleError={handleError}
+          // error={error}
           ndexServer={ndexServer}
           setContentMode={setContentMode}
         />
-      </Paper>
+      </div>
     </div>
   )
 }

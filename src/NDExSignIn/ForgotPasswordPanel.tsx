@@ -1,19 +1,26 @@
 import React, { useContext, useState } from 'react'
-import { TextField, Button, Grid } from '@material-ui/core'
+import { TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { NDExAccountContext } from '../NDExAccountContext'
 import { useResetPassword } from '../api/ndex'
 
 const useStyles = makeStyles({
   root: {
-    width: '100%',
-    justifyContent: 'center',
+    padding: '0.6em',
+    width: '40em',
+    height: '7em',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   textArea: {
-    width: '100%',
+    flexGrow: 1,
+    marginRight: '0.3em'
   },
   itemRight: {
-    width: '100%',
+    // width: '100%',
+
   },
 })
 
@@ -43,45 +50,40 @@ const ForgotPasswordPanel: React.VFC<{
   }
 
   return (
-    <Grid
-      container
-      alignItems={'center'}
-      alignContent={'center'}
+    <div
       className={classes.root}
-      spacing={1}
     >
-      <Grid item md={7}>
-        <TextField
-          className={classes.textArea}
-          error={email.trim().length < 0}
-          helperText={
-            error
-              ? error
-              : data
-              ? 'Sent a new password to e-mail of record'
-              : undefined
-          }
-          name="id"
-          type="text"
-          placeholder=""
-          required
-          label="Account Name or E-Mail"
-          autoComplete="username"
-          value={email}
-          onChange={handleEmailChange}
-        />
-      </Grid>
-      <Grid item md={5}>
-        <Button
-          className={classes.itemRight}
-          variant={'contained'}
-          disabled={email.trim().length < 1 || isLoading}
-          onClick={handleResetPassword}
-        >
-          Reset Password
-        </Button>
-      </Grid>
-    </Grid>
+      <TextField
+        variant="outlined"
+        className={classes.textArea}
+        error={email.trim().length < 0}
+        helperText={
+          error
+            ? error
+            : data
+            ? 'Sent a new password to e-mail of record'
+            : undefined
+        }
+        name="id"
+        type="text"
+        placeholder=""
+        required
+        label="Account Name or E-Mail"
+        autoComplete="username"
+        value={email}
+        onChange={handleEmailChange}
+      />
+      <Button
+        size={'large'}
+        color={'secondary'}
+        className={classes.itemRight}
+        variant={'outlined'}
+        disabled={email.trim().length < 1 || isLoading}
+        onClick={handleResetPassword}
+      >
+        Reset Password
+      </Button>
+    </div>
   )
 }
 
