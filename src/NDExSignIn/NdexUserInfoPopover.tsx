@@ -1,64 +1,44 @@
-import React from 'react'
-import { Avatar, Button, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/styles'
+import React, { FC, ReactElement } from 'react'
+import { Avatar, Button, Grid, Typography } from '@material-ui/core'
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Popover from '@material-ui/core/Popover'
+import { blue } from '@material-ui/core/colors'
 
-const useStyles = makeStyles({
-  accountPopover: {
-    padding: '1em',
-    //width: '240px',
-    flexShrink: 0,
-  },
-  accountPopoverPaper: {
-    padding: '1em',
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    //width: '240px'
-  },
-  ndexAvatar: {},
-  ndexSelectedAvatar: {
-    width: 80,
-    height: 80,
-  },
-  selectedProfile: {
-    'align-items': 'center',
-    padding: '1em',
-  },
-  ndexProfileAvatar: {
-    'vertical-align': 'middle',
-  },
-  ndexProfileText: {
-    'padding-left': '1em',
-    'padding-right': '1em',
-    'vertical-align': 'middle',
-  },
-  ndexProfilesFooter: {
-    padding: '1em',
-  },
-  signInHeader: {
-    display: 'flex',
-    padding: '1.2em',
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    accountPopover: {
+      padding: theme.spacing(2),
+    },
+    item: {
+      padding: 0,
+      marginBottom: theme.spacing(1),
+    },
+    largeAvatar: {
+      backgroundColor: blue[500],
+      width: theme.spacing(10),
+      height: theme.spacing(10),
+    },
+  })
+)
 
-    justifyContent: 'center',
-  },
-  ndexAccountGreeting: {
-    flexGrow: 1,
-  },
-  largeAvatar: {
-    marginRight: '1em',
-    width: '6em',
-    height: '6em',
-  },
-  item: {
-    marginTop: '1em',
-  },
-})
+interface NdexUserInfoPopoverProps {
+  userId: string
+  userImage: string
+  userName: string
+  onLogout: () => void
+  anchorEl: any
+  isOpen: boolean
+  onClose: () => void
+  myAccountURL: string
+}
 
-const NdexUserInfoPopover = (props) => {
+const NdexUserInfoPopover: FC<NdexUserInfoPopoverProps> = (
+  props: NdexUserInfoPopoverProps
+): ReactElement => {
   const classes = useStyles()
 
   const {
+    userId,
     userImage,
     userName,
     onLogout,
@@ -68,15 +48,25 @@ const NdexUserInfoPopover = (props) => {
     myAccountURL,
   } = props
 
-  const handleLogout = () => {
+  const _handleLogout = (): void => {
     onClose()
     onLogout()
+  }
+
+  const getInitial = (userName: string): string => {
+    if (userName === undefined || userName === null || userName.length === 0) {
+      return '?'
+    }
+
+    return userName.substring(0, 1).toUpperCase()
   }
 
   return (
     <Popover
       id="account-popper"
-      className={classes.accountPopover}
+      classes={{
+        paper: classes.accountPopover,
+      }}
       onClose={onClose}
       anchorOrigin={{
         vertical: 'bottom',
@@ -89,34 +79,53 @@ const NdexUserInfoPopover = (props) => {
       anchorEl={anchorEl}
       open={isOpen}
       disableRestoreFocus={true}
-      classes={{
-        paper: classes.accountPopoverPaper,
-      }}
     >
-      <Avatar className={classes.largeAvatar} src={userImage}>
-        U
-      </Avatar>
-      <Typography variant={'subtitle1'} className={classes.item}>
-        You are logged in as {userName}
-      </Typography>
-      {myAccountURL && (
-        <Button
-          variant={'outlined'}
-          className={classes.item}
-          href={myAccountURL}
-          rel="noopener"
-        >
-          Go to My Account
-        </Button>
-      )}
-      <Button
-        variant={'outlined'}
-        className={classes.item}
-        color={'secondary'}
-        onClick={handleLogout}
+      <Grid
+        justifyContent={'center'}
+        alignItems={'center'}
+        container
+        direction="column"
       >
-        Sign Out
-      </Button>
+        <Grid
+          item
+          className={classes.item}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          <Avatar className={classes.largeAvatar} src={userImage}>
+            {getInitial(userName)}
+          </Avatar>
+        </Grid>
+
+        <Grid item className={classes.item}>
+          <Typography variant={'h6'}>{userName}</Typography>
+        </Grid>
+
+        <Grid item className={classes.item}>
+          <Typography variant={'body2'}>
+            You are logged in as {userId}
+          </Typography>
+        </Grid>
+
+        <Grid item direction="row" container spacing={1}>
+          <Grid item>
+            {myAccountURL && (
+              <Button variant={'outlined'} href={myAccountURL} rel="noopener">
+                Go to My Account
+              </Button>
+            )}
+          </Grid>
+          <Grid item>
+            <Button
+              variant={'outlined'}
+              color={'secondary'}
+              onClick={_handleLogout}
+            >
+              Sign Out
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
     </Popover>
   )
 }

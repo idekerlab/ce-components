@@ -53,6 +53,8 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
+    "@rollup/plugin-image": "^2.0.5",
+    "rollup-plugin-postcss": "^3.1.5",
     "size-limit": "^5.0.3",
     "ts-loader": "^9.2.5",
     "tsdx": "^0.14.1",
@@ -63,13 +65,7 @@
     "eslint": "7.32.0"
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.3",
-    "@material-ui/icons": "^4.11.2",
-    "@rollup/plugin-image": "^2.0.5",
     "ndex-client": "../ndex-js-client",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-google-login": "^5.1.21",
-    "rollup-plugin-postcss": "^3.1.5"
+    "react-google-login": "^5.1.21"
   }
 }

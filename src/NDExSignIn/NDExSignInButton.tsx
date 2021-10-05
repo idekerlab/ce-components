@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
-import Button from '@material-ui/core/Button'
-import { withStyles } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton'
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import NdexLoginDialog from './NdexLoginDialog'
@@ -12,36 +12,51 @@ import { useGoogleLogin, useGoogleLogout } from 'react-google-login'
 import { UserValidation, validateLogin } from './validateCredentials'
 import { handleNDExSignOn } from './handleNDExSignOn'
 import { getUserByEmail } from '../api/ndex'
+import { blue } from '@material-ui/core/colors'
 
-const styles = () => ({
-  button: {
-    color: '#4DA1DE',
-    borderColor: '#4DA1DE',
-    '&:active': {
-      borderColor: '#4DA1DE',
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    iconButton: {
+      backgroundColor: 'transparent',
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
     },
-    'line-height': 0,
-  },
-  iconSmall: {
-    color: '#4DA1DE',
-    height: '22px',
-    width: '22px',
-  },
-  iconMedium: {
-    color: '#4DA1DE',
-    height: '24px',
-    width: '24px',
-  },
-  iconLarge: {
-    color: '#4DA1DE',
-    height: '26px',
-    width: '26px',
-  },
-  buttonIcon: {
-    fontSizeSmall: '22px',
-    fontSizeLarge: '26px',
-  },
-})
+    iconSmall: {
+      color: '#FFFFFF',
+      backgroundColor: blue[500],
+      height: theme.spacing(3),
+      width: theme.spacing(3),
+    },
+    iconMedium: {
+      color: '#FFFFFF',
+      backgroundColor: blue[500],
+      height: theme.spacing(5),
+      width: theme.spacing(5),
+    },
+    iconLarge: {
+      color: '#FFFFFF',
+      backgroundColor: blue[500],
+      height: theme.spacing(7),
+      width: theme.spacing(7),
+    },
+    logoutIconSmall: {
+      color: blue[500],
+      height: theme.spacing(3),
+      width: theme.spacing(3),
+    },
+    logoutIconMedium: {
+      color: blue[500],
+      height: theme.spacing(5),
+      width: theme.spacing(5),
+    },
+    logoutIconLarge: {
+      color: blue[500],
+      height: theme.spacing(7),
+      width: theme.spacing(7),
+    },
+  })
+)
 
 const DEFAULT_HANDLER = (loginState) => {
   // Default callback function for login status change
@@ -50,7 +65,11 @@ const DEFAULT_HANDLER = (loginState) => {
   // Add actual handler here...
 }
 
+const LOGGED_IN_USER = 'loggedInUser'
+
 const NDExSignInButton = (props) => {
+  const classes = useStyles()
+
   const {
     ndexServerURL,
     loginInfo,
@@ -61,9 +80,7 @@ const NDExSignInButton = (props) => {
     getUserProfile,
   } = useContext(NDExAccountContext)
 
-  const { classes, onLoginStateUpdated, myAccountURL } = props
-
-  const LOGGED_IN_USER = 'loggedInUser'
+  const { onLoginStateUpdated, myAccountURL } = props
 
   let onUpdate = DEFAULT_HANDLER
   if (onLoginStateUpdated !== null && onLoginStateUpdated !== undefined) {
@@ -98,14 +115,13 @@ const NDExSignInButton = (props) => {
     //console.log("Google logged out");
   }
 
-  const onLogout = () => {
-    console.log('Logout:' + loginInfo.isGoogle)
+  const onLogout = (): void => {
     if (loginInfo.isGoogle) {
       signOut()
     } else {
       window.localStorage.removeItem(LOGGED_IN_USER)
     }
-    // setLoginInfo(null)
+    setLoginInfo(null)
     onLoginStateUpdated(null)
     setDialogState(false)
   }
@@ -274,7 +290,7 @@ const NDExSignInButton = (props) => {
     onFailure: onFailure,
   })
 
-  const iconClassName = (size) => {
+  const iconClassName = (size: string) => {
     switch (size) {
       case 'small':
         return classes.iconSmall
@@ -285,13 +301,24 @@ const NDExSignInButton = (props) => {
     }
   }
 
+  const getLogoutIconClass = (size: string) => {
+    switch (size) {
+      case 'small':
+        return classes.logoutIconSmall
+      case 'large':
+        return classes.logoutIconLarge
+      default:
+        return classes.logoutIconMedium
+    }
+  }
+
   const getIcon = () => {
     return loginInfo && userProfile && !isUserProfileLoading ? (
       <Avatar className={iconClassName(size)} src={userProfile.image}>
         {userProfile.image ? '' : userProfile.userName.trim().substring(0, 1)}
       </Avatar>
     ) : (
-      <AccountCircleIcon className={iconClassName(size)} />
+      <AccountCircleIcon className={getLogoutIconClass(size)} />
     )
   }
 
@@ -300,6 +327,11 @@ const NDExSignInButton = (props) => {
       ? 'Signed in as ' + userProfile.userName
       : 'Sign in to NDEx'
   }
+
+  const userId =
+    loginInfo && userProfile && !isUserProfileLoading
+      ? userProfile.userName
+      : '(Not logged in)'
 
   const userName =
     loginInfo && userProfile && !isUserProfileLoading
@@ -313,12 +345,11 @@ const NDExSignInButton = (props) => {
   return (
     <React.Fragment>
       <Tooltip disableFocusListener title={getTitle()} placement="bottom">
-        <Button
-          className={classes.button}
+        <IconButton
+          className={classes.iconButton}
           variant={variant}
           onClick={(event) => {
             if (loginInfo) {
-              // @ts-ignore TODO: fix this
               setAnchorEl(event.currentTarget)
             } else {
               setDialogState(true)
@@ -327,7 +358,7 @@ const NDExSignInButton = (props) => {
           size={size}
         >
           {getIcon()}
-        </Button>
+        </IconButton>
       </Tooltip>
       <NdexLoginDialog
         setDialogState={setDialogState}
@@ -349,16 +380,16 @@ const NDExSignInButton = (props) => {
       />
       <NdexUserInfoPopover
         userName={userName}
+        userId={userId}
         userImage={userImage}
         isOpen={isPopoverOpen}
         anchorEl={anchorEl}
         onClose={handleClose}
         myAccountURL={myAccountURL}
-        ndexServer={ndexServerURL}
         onLogout={onLogout}
       />
     </React.Fragment>
   )
 }
 
-export default withStyles(styles)(NDExSignInButton)
+export default NDExSignInButton
