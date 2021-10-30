@@ -214,7 +214,8 @@ const NDExSignInButton = (props) => {
   }
 
   const onError = (error: any) => {
-    props.handleError(error)
+    console.error('Login error:', error)
+    // props.handleError(error)
     // setIsGoogle({ googleSSO })
   }
 
@@ -232,7 +233,7 @@ const NDExSignInButton = (props) => {
         )) ||
       (err.error && err['error']) ||
       JSON.stringify(err)
-    props.onError(message, false)
+    onError(message)
   }
 
   const onAutoLoadFinished = (signedIn) => {

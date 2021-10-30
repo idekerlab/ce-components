@@ -1,0 +1,37 @@
+.rte-root {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 5em;
+  height: 40em;
+  display: flex;
+  flex-direction: column;
+}
+
+.rte-wrapper {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: inherit;
+}
+
+.DraftEditor-root {
+  /* height: 20rem; */
+  width: 100%;
+  border: 1px solid #CCCCCC;
+  margin: 0;
+  background-color: #ffffff;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.DraftEditor-editorContainer {
+  height: 100%;
+}
+
+.public-DraftEditor-content {
+  height: 100%;
+  padding-left: 0.5em;
+}
+

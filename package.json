@@ -35,15 +35,16 @@
   "author": "Keiichiro Ono",
   "module": "dist/cytoscape-explore-components.esm.js",
   "devDependencies": {
-    "@babel/core": "^7.15.5",
-    "@size-limit/preset-small-lib": "^5.0.3",
-    "@storybook/addon-essentials": "^6.3.8",
+    "@babel/core": "^7.15.8",
+    "@rollup/plugin-image": "^2.1.1",
+    "@size-limit/preset-small-lib": "^5.0.5",
+    "@storybook/addon-essentials": "^6.3.12",
     "@storybook/addon-info": "^5.3.21",
     "@storybook/addon-knobs": "^6.3.1",
-    "@storybook/addon-links": "^6.3.8",
-    "@storybook/addons": "^6.3.8",
-    "@storybook/react": "^6.3.8",
-    "@types/react": "^17.0.20",
+    "@storybook/addon-links": "^6.3.12",
+    "@storybook/addons": "^6.3.12",
+    "@storybook/react": "^6.3.12",
+    "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
     "babel-loader": "^8.2.2",
     "eslint": "7.32.0",
@@ -53,10 +54,9 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
-    "@rollup/plugin-image": "^2.0.5",
-    "rollup-plugin-postcss": "^3.1.5",
-    "size-limit": "^5.0.3",
-    "ts-loader": "^9.2.5",
+    "rollup-plugin-postcss": "^4.0.1",
+    "size-limit": "^5.0.5",
+    "ts-loader": "^9.2.6",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
@@ -65,7 +65,12 @@
     "eslint": "7.32.0"
   },
   "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.3",
+    "@mui/material": "^5.0.3",
+    "draft-js": "^0.11.7",
     "ndex-client": "../ndex-js-client",
-    "react-google-login": "^5.1.21"
+    "react-google-login": "^5.2.2"
   }
 }

@@ -37,8 +37,6 @@ const NdexLoginPanel = (props) => {
     handleNDExSignOn,
     onSuccessLogin,
     onError,
-    // handleError,
-    // error,
     ndexServer,
     googleSignIn,
     googleSSO,
