@@ -60,7 +60,7 @@ const RichTextEditor: FC<RichTextEditorProps> = (
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', width: '30%', height: '20em', p: 0, m: 0 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '20em', p: 0, m: 0 }}>
       <Box>
         <ToolBar editorState={editorState} setEditorState={setEditorState} />
       </Box>

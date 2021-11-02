@@ -1,29 +1,22 @@
 import React, { FC } from 'react'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
-import ListItemText from '@mui/material/ListItemText'
-import ListItem from '@mui/material/ListItem'
-import List from '@mui/material/List'
-import Divider from '@mui/material/Divider'
-import AppBar from '@mui/material/AppBar'
+import DialogContent from '@mui/material/DialogContent'
 import Toolbar from '@mui/material/Toolbar'
+import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import CancelIcon from '@mui/icons-material/Cancel'
 import UpdateIcon from '@mui/icons-material/Check'
-import Slide from '@mui/material/Slide'
-import { TransitionProps } from '@mui/material/transitions'
 import CompletenessBar from './CompletenessBar'
 import { Box } from '@mui/system'
 import CommonFields from './CommonFields'
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction="up" ref={ref} {...props} />
-})
+import { blue } from '@mui/material/colors';
+
+
+
+import Fab from '@mui/material/Fab'
+import AddIcon from '@mui/icons-material/Add'
 
 const NetworkPropEditor: FC<{
   open: boolean
@@ -34,62 +27,87 @@ const NetworkPropEditor: FC<{
   }
 
   return (
-    <Dialog fullScreen open={open} onClose={handleClose}>
-      <AppBar color="default" sx={{ position: 'fixed' }}>
-        <Toolbar color="secondary">
-          <Typography
-            noWrap
-            variant="body1"
-            component="div"
-            sx={{ minWidth: '12em' }}
-          >
-            Edit Network Properties
-          </Typography>
-
+    <Dialog fullWidth maxWidth="xl" open={open} onClose={handleClose}>
+      <DialogContent
+        sx={{
+          p: 0,
+          m: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <Box sx={{ p: 1, flexGrow: 1, overflowY: 'auto' }}>
+          <Box sx={{ mt: 0 }}>
+            <CommonFields />
+          </Box>
           <Box
-            sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', mr: 1 }}
+            sx={{
+              mt: 2,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <Box sx={{ mr: 1 }}>
-              <Typography
-                variant="body2"
-                component="div"
-                sx={{ textAlign: 'left' }}
+            <Fab size="small" color="primary" aria-label="add">
+              <AddIcon />
+            </Fab>
+          </Box>
+        </Box>
+
+        {/* <Paper  elevation={2}> */}
+          <Toolbar sx={{backgroundColor: blue[700], color: 'white'}}>
+            <Typography
+              noWrap
+              variant="body1"
+              component="div"
+              sx={{ minWidth: '12em' }}
+            >
+              Edit Network Properties
+            </Typography>
+
+            <Box
+              sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', mr: 1 }}
+            >
+              <Box sx={{ mr: 1 }}>
+                <Typography
+                  variant="body2"
+                  component="div"
+                  sx={{ textAlign: 'left' }}
+                >
+                  NDEx Score:
+                </Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1 }}>
+                <CompletenessBar percentComplete={80} />
+              </Box>
+            </Box>
+
+            <Box>
+              <Button
+                size="small"
+                color="secondary"
+                variant={'contained'}
+                sx={{ marginRight: '0.5em' }}
+                onClick={handleClose}
+                startIcon={<CancelIcon />}
               >
-                NDEx Score:
-              </Typography>
+                Cancel
+              </Button>
+              <Button
+                size="small"
+                variant={'contained'}
+                color="primary"
+                onClick={handleClose}
+                startIcon={<UpdateIcon />}
+              >
+                Update
+              </Button>
             </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              <CompletenessBar percentComplete={80} />
-            </Box>
-          </Box>
-
-          <Box>
-            <Button
-              size="small"
-              color="secondary"
-              variant={'contained'}
-              sx={{ marginRight: '0.5em' }}
-              onClick={handleClose}
-              startIcon={<CancelIcon />}
-            >
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              variant={'contained'}
-              color="primary"
-              onClick={handleClose}
-              startIcon={<UpdateIcon />}
-            >
-              Update
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      <Box sx={{mt: 10}}>
-        <CommonFields />
-      </Box>
+          </Toolbar>
+        {/* </Paper> */}
+      </DialogContent>
     </Dialog>
   )
 }
