@@ -93,7 +93,7 @@ const NDExSignInButton = (props) => {
     setDialogOpen(dialogState)
   }
 
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState<any>(null)
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -344,7 +344,11 @@ const NDExSignInButton = (props) => {
 
   return (
     <React.Fragment>
+      {/*
+        // @ts-ignore */}
       <Tooltip disableFocusListener title={getTitle()} placement="bottom">
+        {/*
+        // @ts-ignore */}
         <IconButton
           className={classes.iconButton}
           variant={variant}
