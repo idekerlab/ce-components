@@ -5,7 +5,7 @@ import logo from '../assets/images/cytoscape-logo.svg'
 import logoDisabled from '../assets/images/cytoscape-logo-mono-light.svg'
 import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
-import ndexClient from 'ndex-client'
+import ndexClient from '@js4cytoscape/ndex-client'
 
 import { useCyNDExValue } from '../CyNDExContext'
 import { NDExAccountContext } from '../NDExAccountContext'

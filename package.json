@@ -1,16 +1,18 @@
 {
-  "version": "0.2.0",
+  "name": "cytoscape-explore-components",
+  "author": "Keiichiro Ono",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=10"
   },
   "scripts": {
+    "clean": "rm -rf ./dist",
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
@@ -19,23 +21,24 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
-  "peerDependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.12.2",
-    "react": ">=17.0.1",
-    "react-dom": ">=17.0.1"
-  },
   "prettier": {
     "printWidth": 80,
     "semi": false,
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "cytoscape-explore-components",
-  "author": "Keiichiro Ono",
   "module": "dist/cytoscape-explore-components.esm.js",
+  "peerDependencies": {
+    "@js4cytoscape/ndex-client": "^0.3.2",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/styles": "^4.11.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.5",
+    "@rollup/plugin-image": "^2.0.5",
     "@size-limit/preset-small-lib": "^5.0.3",
     "@storybook/addon-essentials": "^6.3.8",
     "@storybook/addon-info": "^5.3.21",
@@ -49,11 +52,8 @@
     "eslint": "7.32.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.2",
-    "react": "^17.0.2",
     "react-docgen-typescript-loader": "^3.7.2",
-    "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
-    "@rollup/plugin-image": "^2.0.5",
     "rollup-plugin-postcss": "^3.1.5",
     "size-limit": "^5.0.3",
     "ts-loader": "^9.2.5",
@@ -62,10 +62,11 @@
     "typescript": "^4.4.3"
   },
   "resolutions": {
-    "eslint": "7.32.0"
+    "eslint": "7.32.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "dependencies": {
-    "ndex-client": "../ndex-js-client",
-    "react-google-login": "^5.1.21"
+    "react-google-login": "^5.2.2"
   }
 }

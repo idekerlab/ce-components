@@ -7,7 +7,7 @@ import React, {
   Dispatch,
 } from 'react'
 
-import ndexClient from 'ndex-client'
+import ndexClient from '@js4cytoscape/ndex-client'
 
 // There are only two action types for this: Cytoscape is available or not.
 type CyNdexActionType = 'setAvailable' | 'setUnavailable'

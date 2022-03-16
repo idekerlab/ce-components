@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import SaveIcon from '@material-ui/icons/Save'
 import { NDExAccountContext } from '../NDExAccountContext'
-import ndexClient from 'ndex-client'
+import ndexClient from '@js4cytoscape/ndex-client'
 
 const styles = () => ({
   button: {
