@@ -21,11 +21,16 @@ jobs:
           restore-keys: |
             nodeModules-
             
-      - name: Install peer dependencies
-        run: npx install -g npm-install-peers && npm-install-peers
+      - name: Install npm-install-peers
+        run: npm install npm-install-peers
         env:
           CI: true
           
+      - name: Install peer dependencies
+        run: ./node_modules/.bin/npm-install-peers
+        env:
+          CI: true
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile 
         env:
