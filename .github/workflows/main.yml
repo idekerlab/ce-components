@@ -20,19 +20,12 @@ jobs:
           key: nodeModules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             nodeModules-
-            
-      - name: Install npm-install-peers
-        run: npm install npm-install-peers
-        env:
-          CI: true
-          
-      - name: Install peer dependencies
-        run: ./node_modules/.bin/npm-install-peers
-        env:
-          CI: true
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile 
+        run: |
+          yarn add -D npm-install-peers
+          ./node_modules/.bin/npm-install-peers
+          yarn install 
         env:
           CI: true
 
