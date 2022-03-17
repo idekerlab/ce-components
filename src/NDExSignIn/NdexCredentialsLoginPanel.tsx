@@ -182,7 +182,7 @@ const NdexCredentialsLoginPanel: FC<{
         </Typography>
 
         <Typography variant={'body2'}>
-          {"Need an account? "}
+          {'Need an account? '}
           <a
             href="#"
             onClick={() => {

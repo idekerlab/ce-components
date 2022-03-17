@@ -16,11 +16,10 @@ const useStyles = makeStyles({
   },
   textArea: {
     flexGrow: 1,
-    marginRight: '0.3em'
+    marginRight: '0.3em',
   },
   itemRight: {
     // width: '100%',
-
   },
 })
 
@@ -50,9 +49,7 @@ const ForgotPasswordPanel: React.VFC<{
   }
 
   return (
-    <div
-      className={classes.root}
-    >
+    <div className={classes.root}>
       <TextField
         variant="outlined"
         className={classes.textArea}

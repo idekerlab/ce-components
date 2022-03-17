@@ -36,15 +36,8 @@ const SaveToNDExButton = (props) => {
 
   const { ndexServerURL, loginInfo } = useContext(NDExAccountContext)
 
-  const {
-    disabled,
-    tooltip,
-    onSuccess,
-    onFailure,
-    variant,
-    fetchCX,
-    size,
-  } = props
+  const { disabled, tooltip, onSuccess, onFailure, variant, fetchCX, size } =
+    props
 
   const onClick = () => {
     const ndex = new ndexClient.NDEx(ndexServerURL + '/v2')
