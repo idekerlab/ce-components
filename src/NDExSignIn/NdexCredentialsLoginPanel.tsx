@@ -83,34 +83,33 @@ const NdexCredentialsLoginPanel: FC<{
     }
   }, [id, password])
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     setLoading(true)
     setErrorMessage(null)
 
-    validateLogin(id, password, ndexServer).then((data: UserValidation) => {
-      setTimeout(() => {
-        setLoading(false)
+    const data: UserValidation = await validateLogin(id, password, ndexServer)
 
-        const { error, userData } = data
-        if (error !== null && error['message'] !== undefined) {
-          setErrorMessage(error['message'] as string)
-        } else {
-          handleNDExSignOn(
-            {
-              id,
-              password,
-              ndexServer,
-              fullName: userData.firstName + ' ' + userData.lastName,
-              image: userData.image,
-              details: userData,
-            },
-            onSuccessLogin
-          )
-        }
-      }, 500)
-    })
+    setLoading(false)
+
+    const { error, userData } = data
+    if (error !== null && error['message'] !== undefined) {
+      setErrorMessage(error['message'] as string)
+    } else {
+      handleNDExSignOn(
+        {
+          id,
+          password,
+          ndexServer,
+          fullName: userData.firstName + ' ' + userData.lastName,
+          image: userData.image,
+          details: userData,
+        },
+        onSuccessLogin
+      )
+    }
+    
   }
 
   const handleChange = (tag: string) => (event) => {

@@ -3,7 +3,7 @@ import React from 'react'
 import GoogleLogo from './assets/images/google-logo.svg'
 import GoogleLogoDisabled from './assets/images/google-logo-disabled.svg'
 import { Button } from '@material-ui/core'
-import HtmlTooltip from './HtmlTooltip'
+import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
 
@@ -35,7 +35,7 @@ const NdexGoogleLoginPanel = (props) => {
   const logo = googleSSO ? GoogleLogo : GoogleLogoDisabled
 
   return (
-    <HtmlTooltip
+    <Tooltip
       placement={'left'}
       disableFocusListener={googleSSO}
       disableHoverListener={googleSSO}
@@ -64,7 +64,7 @@ const NdexGoogleLoginPanel = (props) => {
           </span>
         </Button>
       </div>
-    </HtmlTooltip>
+    </Tooltip>
   )
 }
 

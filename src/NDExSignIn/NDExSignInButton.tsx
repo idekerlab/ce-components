@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -70,6 +70,7 @@ const LOGGED_IN_USER = 'loggedInUser'
 const NDExSignInButton = (props) => {
   const classes = useStyles()
 
+
   const {
     ndexServerURL,
     loginInfo,
@@ -86,6 +87,10 @@ const NDExSignInButton = (props) => {
   if (onLoginStateUpdated !== null && onLoginStateUpdated !== undefined) {
     onUpdate = onLoginStateUpdated
   }
+  
+  useEffect(()=> {
+    onAutoLoadFinished(null)
+  }, [])
 
   const [isDialogOpen, setDialogOpen] = useState(false)
 
@@ -105,19 +110,17 @@ const NDExSignInButton = (props) => {
 
   const [errorMessage, setErrorMessage] = useState('')
 
-  // const [tempGoogleAuth, setTempGoogleAuth] = useState()
-
   const onLoginSuccess = (event): void => {
     console.log('Login success', event)
   }
 
   const onGoogleLogoutSuccess = (): void => {
-    //console.log("Google logged out");
+    console.log("Google logged out");
   }
 
   const onLogout = (): void => {
-    if (loginInfo.isGoogle) {
-      signOut()
+    if (googleSignOut !== null && loginInfo.isGoogle) {
+      googleSignOut()
     } else {
       window.localStorage.removeItem(LOGGED_IN_USER)
     }
@@ -127,8 +130,6 @@ const NDExSignInButton = (props) => {
   }
 
   const onGoogleSuccess = (res) => {
-    console.log('onGoogleSuccess called')
-
     const newNdexCredential = {
       loaded: true,
       isLogin: true,
@@ -166,13 +167,10 @@ const NDExSignInButton = (props) => {
 
   const refreshTokenSetup = (res) => {
     let refreshTiming = (res.expires_in || 3600 - 5 * 60) * 1000
-    console.log('Will refresh auth token in ' + refreshTiming)
 
     const refreshToken = async () => {
       const newAuthRes = await res.reloadAuthResponse()
       refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000
-      console.log('newAuthRes: ', newAuthRes)
-      console.log('Will refresh auth token in ' + refreshTiming)
       onTokenRefresh(res, newAuthRes)
       setTimeout(refreshToken, refreshTiming)
     }
@@ -182,13 +180,8 @@ const NDExSignInButton = (props) => {
 
   const onTokenRefresh = (res, authResponse) => {
     const loginDetails = res
-    console.log('Login Details', loginDetails)
-
     let refreshedLoginDetails = Object.assign({}, loginDetails)
-
     refreshedLoginDetails['id_token'] = authResponse.id_token
-
-    console.log('Refreshed Login Details', refreshedLoginDetails)
 
     const loginInfo = { isGoogle: true, loginDetails: refreshedLoginDetails }
 
@@ -198,7 +191,6 @@ const NDExSignInButton = (props) => {
 
   const onSuccessLogin = (loginInfo) => {
     setLoginInfo(loginInfo)
-    console.log('onSuccess loginInfo: ', loginInfo)
     if (loginInfo.isGoogle) {
       getUserProfile(loginInfo.loginDetails.profileObj.email)
     } else {
@@ -273,22 +265,39 @@ const NDExSignInButton = (props) => {
     }
   }
 
-  const { signIn } = useGoogleLogin({
-    clientId: googleClientId,
-    scope: 'profile email',
-    onSuccess: onGoogleSuccess,
-    onFailure: onFailure,
-    onAutoLoadFinished: onAutoLoadFinished,
-    isSignedIn: true,
-    fetchBasicProfile: true,
-  })
+  let googleSignIn: (() => void) | null = null 
+  try {
+    if (googleClientId !== undefined) {
+      const { signIn } = useGoogleLogin({
+        clientId: googleClientId,
+        scope: 'profile email',
+        onSuccess: onGoogleSuccess,
+        onFailure: onFailure,
+        onAutoLoadFinished: onAutoLoadFinished,
+        isSignedIn: true,
+        fetchBasicProfile: true,
+      })
+      googleSignIn = signIn
+    }
+  } catch (error) {
+    console.error('Google Login Initialization:', error)
+  }
 
-  const { signOut } = useGoogleLogout({
-    clientId: googleClientId,
-    onLogoutSuccess: onGoogleLogoutSuccess,
-    // @ts-ignore
-    onFailure: onFailure,
-  })
+  let googleSignOut: (() => void) | null = null 
+  try {
+    if (googleClientId !== undefined) {
+      const { signOut } = useGoogleLogout({
+        clientId: googleClientId,
+        onLogoutSuccess: onGoogleLogoutSuccess,
+        // @ts-ignore
+        onFailure: onFailure,
+      })
+
+      googleSignOut = signOut
+    }
+  } catch (error) {
+    console.error('Google Logout Initialization failed:', error)
+  }
 
   const iconClassName = (size: string) => {
     switch (size) {
@@ -378,7 +387,7 @@ const NDExSignInButton = (props) => {
         onError={onError}
         handleError={handleError}
         errorMessage={errorMessage}
-        signIn={signIn}
+        signIn={googleSignIn}
         googleSSO={googleSSO}
         onGoogleAgreement={onGoogleAgreement}
       />
