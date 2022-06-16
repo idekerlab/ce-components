@@ -129,7 +129,12 @@ const NDExSignInButton = (props) => {
     setDialogState(false)
   }
 
+
+  /**
+   * Will be executed after Google login is finished.
+   */
   const onGoogleSuccess = (res) => {
+
     const newNdexCredential = {
       loaded: true,
       isLogin: true,
@@ -165,26 +170,48 @@ const NDExSignInButton = (props) => {
     onSuccessLogin(newLoginInfo)
   }
 
-  const refreshTokenSetup = (res) => {
-    let refreshTiming = (res.expires_in || 3600 - 5 * 60) * 1000
+  // Default timeout is 20% before the expiration of the token
+  const FIVE_MINUTES = 5 * 60 * 1000
+  const getRefreshTime = (expInMilSec: number): number => {
+    return (expInMilSec * 1000) - FIVE_MINUTES
+  }
+
+  // It is not necessary to refresh the token for the first time
+  let isInitialized: boolean = false
+
+  const refreshTokenSetup = (res): void => {
+    let refreshTiming: number = getRefreshTime(res.expires_in)
 
     const refreshToken = async () => {
       const newAuthRes = await res.reloadAuthResponse()
-      refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000
-      onTokenRefresh(res, newAuthRes)
+      refreshTiming = getRefreshTime(newAuthRes.expires_in)
+      
+      if(isInitialized) {
+        onTokenRefresh(res, newAuthRes)
+      } else {
+        isInitialized = true
+      }
       setTimeout(refreshToken, refreshTiming)
     }
 
+    // Initiate the call to refresh the token
     setTimeout(refreshToken, refreshTiming)
   }
 
-  const onTokenRefresh = (res, authResponse) => {
+  /**
+   * 
+   * Refresh the token before it expires
+   * 
+   * @param res original credential object
+   * @param newRes new credential object
+   */
+  const onTokenRefresh = (res, newRes): void => {
     const loginDetails = res
     let refreshedLoginDetails = Object.assign({}, loginDetails)
-    refreshedLoginDetails['id_token'] = authResponse.id_token
-
+    const { id_token } = newRes
+    
+    refreshedLoginDetails['tokenId'] = id_token
     const loginInfo = { isGoogle: true, loginDetails: refreshedLoginDetails }
-
     setLoginInfo(loginInfo)
     onLoginStateUpdated(loginInfo)
   }
@@ -265,17 +292,18 @@ const NDExSignInButton = (props) => {
     }
   }
 
-  let googleSignIn: (() => void) | null = null 
+  let googleSignIn: (() => void) | null = null
+
   try {
     if (googleClientId !== undefined) {
       const { signIn } = useGoogleLogin({
         clientId: googleClientId,
         scope: 'profile email',
         onSuccess: onGoogleSuccess,
-        onFailure: onFailure,
-        onAutoLoadFinished: onAutoLoadFinished,
+        onFailure,
+        onAutoLoadFinished,
         isSignedIn: true,
-        fetchBasicProfile: true,
+        fetchBasicProfile: true
       })
       googleSignIn = signIn
     }
