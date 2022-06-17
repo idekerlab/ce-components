@@ -70,7 +70,6 @@ const LOGGED_IN_USER = 'loggedInUser'
 const NDExSignInButton = (props) => {
   const classes = useStyles()
 
-
   const {
     ndexServerURL,
     loginInfo,
@@ -89,7 +88,13 @@ const NDExSignInButton = (props) => {
   }
   
   useEffect(()=> {
-    onAutoLoadFinished(null)
+    // This is necessary because initialization code will not be executed without Google Client ID
+    setTimeout(() => {
+      if(googleClientId === undefined) {
+        console.info('* Google Login is disabled for this server. Basic Auth only.')
+        onAutoLoadFinished(null)
+      }
+    }, 800);
   }, [])
 
   const [isDialogOpen, setDialogOpen] = useState(false)
@@ -254,7 +259,7 @@ const NDExSignInButton = (props) => {
     props.onError(message, false)
   }
 
-  const onAutoLoadFinished = (signedIn) => {
+  const onAutoLoadFinished = (signedIn): void => {
     const loggedInUserString = window.localStorage.getItem('loggedInUser')
 
     if (loggedInUserString) {
