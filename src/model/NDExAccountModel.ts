@@ -1,11 +1,16 @@
+import { KeycloakConfig } from 'keycloak-js'
+
 type NDExAccountModel = {
+  // Base URL of the NDEx server
   ndexServerURL: string
-  googleClientId: string
+
+  // Keycloak server configuration. If not provided, basic auth will be used.
+  keycloakConfig?: KeycloakConfig
   loginInfo: any
   setLoginInfo: (loginInfo: any) => void
   isUserProfileLoading: boolean
   userProfile: any
-  userProfileError: string | undefined
+  userProfileError?: string
   getUserProfile: Function
 }
 

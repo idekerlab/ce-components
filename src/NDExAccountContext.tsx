@@ -8,7 +8,7 @@ export const NDExAccountContext = createContext<NDExAccountModel>(
 
 export const NDExAccountProvider = ({
   ndexServerURL,
-  googleClientId,
+  keycloakConfig,
   children,
 }) => {
   const [loginInfo, setLoginInfo] = useState<any>(null)
@@ -22,7 +22,7 @@ export const NDExAccountProvider = ({
 
   const defState: NDExAccountModel = {
     ndexServerURL,
-    googleClientId,
+    keycloakConfig,
     loginInfo,
     setLoginInfo,
     isUserProfileLoading,

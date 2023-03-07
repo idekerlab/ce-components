@@ -8,11 +8,11 @@ import { NDExAccountContext } from '../NDExAccountContext'
 import Avatar from '@material-ui/core/Avatar'
 import NdexUserInfoPopover from './NdexUserInfoPopover'
 
-import { useGoogleLogin, useGoogleLogout } from 'react-google-login'
 import { UserValidation, validateLogin } from './validateCredentials'
 import { handleNDExSignOn } from './handleNDExSignOn'
 import { getUserByEmail } from '../api/ndex'
 import { blue } from '@material-ui/core/colors'
+import { IconProps } from '@material-ui/core'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,9 +72,9 @@ const NDExSignInButton = (props) => {
 
   const {
     ndexServerURL,
+    keycloakConfig,
     loginInfo,
     setLoginInfo,
-    googleClientId,
     userProfile,
     isUserProfileLoading,
     getUserProfile,
@@ -86,18 +86,20 @@ const NDExSignInButton = (props) => {
   if (onLoginStateUpdated !== null && onLoginStateUpdated !== undefined) {
     onUpdate = onLoginStateUpdated
   }
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     // This is necessary because initialization code will not be executed without Google Client ID
     setTimeout(() => {
-      if(googleClientId === undefined) {
-        console.info('* Google Login is disabled for this server. Basic Auth only.')
+      if (keycloakConfig === undefined) {
+        console.info(
+          '* Google Login via Keycloak is disabled for this server. Basic Auth only.'
+        )
         onAutoLoadFinished(null)
       }
-    }, 800);
+    }, 800)
   }, [])
 
-  const [isDialogOpen, setDialogOpen] = useState(false)
+  const [isDialogOpen, setDialogOpen] = useState<boolean>(false)
 
   const setDialogState = (dialogState) => {
     setDialogOpen(dialogState)
@@ -119,9 +121,9 @@ const NDExSignInButton = (props) => {
     console.log('Login success', event)
   }
 
-  const onGoogleLogoutSuccess = (): void => {
-    console.log("Google logged out");
-  }
+  // const onGoogleLogoutSuccess = (): void => {
+  //   console.log('Google logged out')
+  // }
 
   const onLogout = (): void => {
     if (googleSignOut !== null && loginInfo.isGoogle) {
@@ -134,12 +136,10 @@ const NDExSignInButton = (props) => {
     setDialogState(false)
   }
 
-
   /**
    * Will be executed after Google login is finished.
    */
   const onGoogleSuccess = (res) => {
-
     const newNdexCredential = {
       loaded: true,
       isLogin: true,
@@ -156,15 +156,10 @@ const NDExSignInButton = (props) => {
         onGoogleAgreement(res)
       })
       .catch((error) => {
-        // if (isOpen) {
-        // setTempGoogleAuth(res)
-        // setContentMode(content_mode.SIGN_TERMS_AND_CONDITIONS)
-        // } else {
         setLoginInfo(null)
         getUserProfile(null)
         onLoginStateUpdated(null)
         console.warn('Get by email failed:', error)
-        // }
       })
   }
 
@@ -178,7 +173,7 @@ const NDExSignInButton = (props) => {
   // Default timeout is 20% before the expiration of the token
   const FIVE_MINUTES = 5 * 60 * 1000
   const getRefreshTime = (expInMilSec: number): number => {
-    return (expInMilSec * 1000) - FIVE_MINUTES
+    return expInMilSec * 1000 - FIVE_MINUTES
   }
 
   // It is not necessary to refresh the token for the first time
@@ -190,8 +185,8 @@ const NDExSignInButton = (props) => {
     const refreshToken = async () => {
       const newAuthRes = await res.reloadAuthResponse()
       refreshTiming = getRefreshTime(newAuthRes.expires_in)
-      
-      if(isInitialized) {
+
+      if (isInitialized) {
         onTokenRefresh(res, newAuthRes)
       } else {
         isInitialized = true
@@ -204,9 +199,9 @@ const NDExSignInButton = (props) => {
   }
 
   /**
-   * 
+   *
    * Refresh the token before it expires
-   * 
+   *
    * @param res original credential object
    * @param newRes new credential object
    */
@@ -214,7 +209,7 @@ const NDExSignInButton = (props) => {
     const loginDetails = res
     let refreshedLoginDetails = Object.assign({}, loginDetails)
     const { id_token } = newRes
-    
+
     refreshedLoginDetails['tokenId'] = id_token
     const loginInfo = { isGoogle: true, loginDetails: refreshedLoginDetails }
     setLoginInfo(loginInfo)
@@ -242,22 +237,22 @@ const NDExSignInButton = (props) => {
     // setIsGoogle({ googleSSO })
   }
 
-  // Unique ID for each NDEx server
-  let googleSSO = true
-  if (googleClientId === undefined || googleClientId === null) {
-    googleSSO = false
-  }
+  // Enable only when Keycloak is configured
+  // let googleSSO: boolean = true
+  // if (keycloakConfig === undefined) {
+  //   googleSSO = false
+  // }
 
-  const onFailure = (err): void => {
-    const message =
-      (err.details &&
-        err.details.startsWith(
-          'Not a valid origin for the client: http://localhost:'
-        )) ||
-      (err.error && err['error']) ||
-      JSON.stringify(err)
-    props.onError(message, false)
-  }
+  // const onFailure = (err): void => {
+  //   const message =
+  //     (err.details &&
+  //       err.details.startsWith(
+  //         'Not a valid origin for the client: http://localhost:'
+  //       )) ||
+  //     (err.error && err['error']) ||
+  //     JSON.stringify(err)
+  //   props.onError(message, false)
+  // }
 
   const onAutoLoadFinished = (signedIn): void => {
     const loggedInUserString = window.localStorage.getItem('loggedInUser')
@@ -297,40 +292,40 @@ const NDExSignInButton = (props) => {
     }
   }
 
-  let googleSignIn: (() => void) | null = null
+  // let googleSignIn: (() => void) | null = null
 
-  try {
-    if (googleClientId !== undefined) {
-      const { signIn } = useGoogleLogin({
-        clientId: googleClientId,
-        scope: 'profile email',
-        onSuccess: onGoogleSuccess,
-        onFailure,
-        onAutoLoadFinished,
-        isSignedIn: true,
-        fetchBasicProfile: true
-      })
-      googleSignIn = signIn
-    }
-  } catch (error) {
-    console.error('Google Login Initialization:', error)
-  }
+  // try {
+  //   if (googleClientId !== undefined) {
+  //     const { signIn } = useGoogleLogin({
+  //       clientId: googleClientId,
+  //       scope: 'profile email',
+  //       onSuccess: onGoogleSuccess,
+  //       onFailure,
+  //       onAutoLoadFinished,
+  //       isSignedIn: true,
+  //       fetchBasicProfile: true,
+  //     })
+  //     googleSignIn = signIn
+  //   }
+  // } catch (error) {
+  //   console.error('Google Login Initialization:', error)
+  // }
 
-  let googleSignOut: (() => void) | null = null 
-  try {
-    if (googleClientId !== undefined) {
-      const { signOut } = useGoogleLogout({
-        clientId: googleClientId,
-        onLogoutSuccess: onGoogleLogoutSuccess,
-        // @ts-ignore
-        onFailure: onFailure,
-      })
+  // let googleSignOut: (() => void) | null = null
+  // try {
+  //   if (googleClientId !== undefined) {
+  //     const { signOut } = useGoogleLogout({
+  //       clientId: googleClientId,
+  //       onLogoutSuccess: onGoogleLogoutSuccess,
+  //       // @ts-ignore
+  //       onFailure: onFailure,
+  //     })
 
-      googleSignOut = signOut
-    }
-  } catch (error) {
-    console.error('Google Logout Initialization failed:', error)
-  }
+  //     googleSignOut = signOut
+  //   }
+  // } catch (error) {
+  //   console.error('Google Logout Initialization failed:', error)
+  // }
 
   const iconClassName = (size: string) => {
     switch (size) {
@@ -386,14 +381,10 @@ const NDExSignInButton = (props) => {
 
   return (
     <React.Fragment>
-      {/*
-        // @ts-ignore */}
       <Tooltip disableFocusListener title={getTitle()} placement="bottom">
-        {/*
-        // @ts-ignore */}
         <IconButton
           className={classes.iconButton}
-          variant={variant}
+          // variant={'outlined'}
           onClick={(event) => {
             if (loginInfo) {
               setAnchorEl(event.currentTarget)
@@ -420,9 +411,9 @@ const NDExSignInButton = (props) => {
         onError={onError}
         handleError={handleError}
         errorMessage={errorMessage}
-        signIn={googleSignIn}
-        googleSSO={googleSSO}
-        onGoogleAgreement={onGoogleAgreement}
+        // signIn={googleSignIn}
+        // googleSSO={googleSSO}
+        // onGoogleAgreement={onGoogleAgreement}
       />
       <NdexUserInfoPopover
         userName={userName}

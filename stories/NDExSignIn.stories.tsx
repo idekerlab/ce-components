@@ -1,7 +1,8 @@
 import React from 'react'
 import NDExSignInButton from '../src/NDExSignIn'
 import { NDExAccountProvider } from '../src/NDExAccountContext'
-import { withKnobs, object, text } from '@storybook/addon-knobs'
+import { withKnobs } from '@storybook/addon-knobs'
+import { KeycloakConfig } from 'keycloak-js'
 
 export default {
   title: 'NDEx Sign In',
@@ -9,15 +10,23 @@ export default {
   decorators: [withKnobs],
 }
 
+const ndexServerURL: string = 'https://dev.ndexbio.org'
+
 export const Default = () => {
-  const loginStateUpdated = loginState => {
+  const loginStateUpdated = (loginState) => {
     console.log('Update in login state: ' + JSON.stringify(loginState))
+  }
+
+  const keycloakConfig: KeycloakConfig = {
+    url: ndexServerURL + '/auth2',
+    realm: 'ndex',
+    clientId: 'localtestclient',
   }
 
   return (
     <NDExAccountProvider
-      ndexServerURL="http://dev.ndexbio.org"
-      googleClientId="802839698598-mrrd3iq3jl06n6c2fo1pmmc8uugt9ukq.apps.googleusercontent.com"
+      ndexServerURL={ndexServerURL}
+      keycloakConfig={keycloakConfig}
     >
       <NDExSignInButton
         variant="outlined"

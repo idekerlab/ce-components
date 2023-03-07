@@ -68,7 +68,22 @@ const useStyles = makeStyles({
   },
 })
 
-const NdexLoginDialog = (props) => {
+type NdexLoginDialogProps = {
+  isOpen: boolean
+  setDialogState: (isOpen: boolean) => void
+  ndexServer: string
+  onLoginSuccess: (loginInfo: LoginInfo) => void
+  onLogout: () => void
+  onLoginStateUpdated: (loginInfo: LoginInfo) => void
+  handleNDExSignOn: (username: string, password: string) => void
+  onSuccessLogin: (loginInfo: LoginInfo) => void
+  onError: (error: string) => void
+  handleError: (error: string) => void
+  errorMessage: string
+  signIn: (googleUser: any) => void
+}
+
+const NdexLoginDialog = (props: NdexLoginDialogProps) => {
   const classes = useStyles()
 
   const {
@@ -79,13 +94,10 @@ const NdexLoginDialog = (props) => {
     onLogout,
     handleNDExSignOn,
     onSuccessLogin,
-    onGoogleSuccess,
     onError,
     handleError,
     errorMessage,
     signIn,
-    googleSSO,
-    onGoogleAgreement,
   } = props
 
   const { loginInfo } = useContext(NDExAccountContext)
